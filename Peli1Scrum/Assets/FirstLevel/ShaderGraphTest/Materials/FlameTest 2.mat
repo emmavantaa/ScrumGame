@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: FlameTest
-  m_Shader: {fileID: 4800000, guid: 2a34cb74623b10047b5f780d2270a737, type: 3}
+  m_Name: FlameTest 2
+  m_Shader: {fileID: 4800000, guid: 6557f1919065f1d49ab02ece783c125f, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
@@ -19,8 +19,12 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture2D_4B354EAD:
+        m_Texture: {fileID: 2800000, guid: 566456b1ca2b82a478541ddbe006f157, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - Texture2D_A9CBBBEC:
-        m_Texture: {fileID: 2800000, guid: 032b0736f78fdd14e819b923a38955ac, type: 3}
+        m_Texture: {fileID: 2800000, guid: 69f7cb2682e29d241aa8718f4d02cddf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
