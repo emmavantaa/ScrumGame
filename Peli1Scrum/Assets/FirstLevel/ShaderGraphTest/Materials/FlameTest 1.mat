@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: FlameTest
+  m_Name: FlameTest 1
   m_Shader: {fileID: 4800000, guid: 2a34cb74623b10047b5f780d2270a737, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -71,7 +71,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_722D8F3: {r: 4.237095, g: 1.375392, b: 0.24402116, a: 0}
+    - Color_722D8F3: {r: 5.656854, g: 1.8513746, b: 0.34688273, a: 0}
     - Vector2_154D8CA: {r: 0.01, g: -0.5, b: 0, a: 0}
     - Vector2_4E51C594: {r: 0, g: -0.4, b: 0, a: 0}
     - Vector2_4F2319F9: {r: 0, g: -0.3, b: 0, a: 0}
