@@ -32,9 +32,15 @@ namespace Invector.CharacterController
         [HideInInspector]
         public bool keepDirection;                          // keep the current direction in case you change the cameraState
 
-        protected vThirdPersonController cc;                // access the ThirdPersonController component                
+        protected vThirdPersonController cc;                // access the ThirdPersonController component    
+
+        Kiipeäminen kiipeäminen;
 
         #endregion
+        private void Awake()
+        {
+            kiipeäminen=gameObject.GetComponent<Kiipeäminen>();
+        }
 
         protected virtual void Start()
         {
@@ -113,6 +119,18 @@ namespace Invector.CharacterController
         {
             if (Input.GetKeyDown(jumpInput))
                 cc.Jump();
+
+
+            //Vaihtoehtoinen kiipeily hyppynapilla
+
+            //if (Input.GetKeyDown(jumpInput) && kiipeäminen.kiipeilee == false && kiipeäminen.liiku == false)
+            //{
+            //    kiipeäminen.VaultingParempi();
+            //    {
+            //        if (kiipeäminen.kiipeilee == false && kiipeäminen.liiku == false)
+            //            cc.Jump();
+            //    }
+            //}
         }
 
         protected virtual void ExitGameInput()
