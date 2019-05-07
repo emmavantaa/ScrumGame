@@ -11,7 +11,6 @@ public class BridgeEnemy : MonoBehaviour
     public int attack1Damage = 1;
     public float timeBetweenAttacks;
     public float hp = 1;
-    public bool immortal;
     public float kaatumisSpeed = 1;
     public GameObject player;
 

@@ -7865,7 +7865,6 @@ MonoBehaviour:
   attack1Damage: 1
   timeBetweenAttacks: 0
   hp: 1
-  immortal: 0
   kaatumisSpeed: 1
   player: {fileID: 0}
   enemy: {fileID: 260533393}
@@ -61545,10 +61544,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerHp: 3
-  knockback: 0
   immortalityTime: 2
   immortalMoment: 0
-  immortal: 1
+  immortal: 0
 --- !u!114 &1540500122
 MonoBehaviour:
   m_ObjectHideFlags: 0

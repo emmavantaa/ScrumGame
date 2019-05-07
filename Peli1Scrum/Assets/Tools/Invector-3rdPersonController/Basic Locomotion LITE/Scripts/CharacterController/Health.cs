@@ -7,7 +7,7 @@ public class Health : MonoBehaviour
     
 {
     public float playerHp = 3;
-    public bool knockback = false;
+    //public bool knockback;
     GameObject player;
     public float immortalityTime=2;
     float time1;
@@ -38,10 +38,10 @@ public class Health : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (knockback)
-        {
-            //player.GetComponent<Rigidbody>().AddExplosionForce
-        }
+        //if (knockback)
+        //{
+        //    player.GetComponent<Rigidbody>().AddExplosionForce
+        //}
     }
     public void TakeDamage()
     {
