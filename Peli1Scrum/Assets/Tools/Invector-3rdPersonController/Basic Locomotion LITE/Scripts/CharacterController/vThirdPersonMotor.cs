@@ -9,6 +9,7 @@ namespace Invector.CharacterController
 {
     public abstract class vThirdPersonMotor : MonoBehaviour
     {
+        GameObject miekka;
         #region Variables        
 
         #region Layers
@@ -105,6 +106,12 @@ namespace Invector.CharacterController
         public bool
             isJumping;
 
+        private void Awake()
+        {
+            miekka = GameObject.FindGameObjectWithTag("Miekka");
+            var kk = 1;
+        }
+
         protected void RemoveComponents()
         {
             if (_capsuleCollider != null) Destroy(_capsuleCollider);
@@ -141,6 +148,7 @@ namespace Invector.CharacterController
         [HideInInspector]
         public CapsuleCollider _capsuleCollider;                    // access CapsuleCollider information
 
+
         #endregion
 
         #region Hide Variables
@@ -157,6 +165,7 @@ namespace Invector.CharacterController
         #endregion
 
         #endregion
+
 
         public void Init()
         {
@@ -297,6 +306,7 @@ namespace Invector.CharacterController
             {
                 jumpCounter = 0;
                 isJumping = false;
+                
             }
             // apply extra force to the jump height   
             var vel = _rigidbody.velocity;
@@ -373,6 +383,7 @@ namespace Invector.CharacterController
             if (groundDistance <= 0.05f)
             {
                 isGrounded = true;
+                //miekka.GetComponent<Miekka>().hyppii = false;
                 Sliding();
             }
             else
@@ -380,6 +391,7 @@ namespace Invector.CharacterController
                 if (groundDistance >= groundCheckDistance)
                 {
                     isGrounded = false;
+                    //miekka.GetComponent<Miekka>().hyppii = true;
                     // check vertical velocity
                     verticalVelocity = _rigidbody.velocity.y;
                     // apply extra gravity when falling
@@ -444,6 +456,7 @@ namespace Invector.CharacterController
             {
                 isSliding = true;
                 isGrounded = false;
+                //miekka.GetComponent<Miekka>().hyppii = true;
                 var slideVelocity = (GroundAngle() - slopeLimit) * 2f;
                 slideVelocity = Mathf.Clamp(slideVelocity, 0, 10);
                 _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, -slideVelocity, _rigidbody.velocity.z);
@@ -452,6 +465,7 @@ namespace Invector.CharacterController
             {
                 isSliding = false;
                 isGrounded = true;
+                //miekka.GetComponent<Miekka>().hyppii = false;
             }
         }
 
