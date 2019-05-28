@@ -7,6 +7,10 @@ TagManager:
   - Enemy
   - Miekka
   - VihunAlue
+  - Ground
+  - CarrotWall
+  - BunnyAmmo
+  - AmmoBun
   layers:
   - Default
   - TransparentFX

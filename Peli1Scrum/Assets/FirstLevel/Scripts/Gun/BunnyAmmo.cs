@@ -6,14 +6,14 @@ public class BunnyAmmo : MonoBehaviour
 {
 
 
-    private void OnCollisionEnter(Collision col)
+    private void OnTriggerEnter(Collider col)
     {
         
         if (col.gameObject.CompareTag("CarrotWall") || col.gameObject.CompareTag("Ground"))
         {
 
             Debug.Log("Hits Carrot wall");
-            Destroy(gameObject, 0.5f);
+            Destroy(gameObject, 1f);
         }
     }
 
