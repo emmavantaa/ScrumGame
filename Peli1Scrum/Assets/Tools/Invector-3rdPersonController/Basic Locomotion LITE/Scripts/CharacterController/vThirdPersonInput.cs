@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Invector.CharacterController
 {
-    [DebuggerStepThrough]
+    //[DebuggerStepThrough]
     public class vThirdPersonInput : MonoBehaviour
     {
         GameObject player;

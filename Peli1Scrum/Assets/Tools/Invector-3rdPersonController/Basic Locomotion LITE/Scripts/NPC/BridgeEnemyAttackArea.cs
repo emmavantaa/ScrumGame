@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
-[DebuggerStepThrough]
+//[DebuggerStepThrough]
 public class BridgeEnemyAttackArea : MonoBehaviour
 {
     public BoxCollider territory;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
-[DebuggerStepThrough]
+//[DebuggerStepThrough]
 public class Soul : MonoBehaviour
 {
     public float collectedSouls = 0;

@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Invector.CharacterController
 {
-    [DebuggerStepThrough]
+    //[DebuggerStepThrough]
     public abstract class vThirdPersonMotor : MonoBehaviour
     {
         GameObject player;

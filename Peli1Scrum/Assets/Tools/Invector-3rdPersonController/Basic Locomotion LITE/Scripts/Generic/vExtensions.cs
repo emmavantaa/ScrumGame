@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Invector
 {
-    [System.Diagnostics.DebuggerStepThrough]
+    //[System.Diagnostics.DebuggerStepThrough]
     public static class vExtensions
     {
         public static T[]  Append<T>(this T[] arrayInitial, T[] arrayToAppend) 

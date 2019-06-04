@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
-[DebuggerStepThrough]
+//[DebuggerStepThrough]
 public class Melee : MonoBehaviour
 {
     bool painettu = false;

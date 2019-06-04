@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Invector;
 using System.Diagnostics;
 
-[DebuggerStepThrough]
+//[DebuggerStepThrough]
 public class vThirdPersonCamera : MonoBehaviour
 {
     private static vThirdPersonCamera _instance;

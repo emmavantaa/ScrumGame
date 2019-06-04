@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Diagnostics;
+//[DebuggerStepThrough]
 public class ImmortalEmission : MonoBehaviour
 {
     // Start is called before the first frame update

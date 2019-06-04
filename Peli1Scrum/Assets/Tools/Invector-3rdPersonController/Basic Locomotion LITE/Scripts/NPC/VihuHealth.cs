@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
-[DebuggerStepThrough]
+//[DebuggerStepThrough]
 public class VihuHealth : MonoBehaviour
 {
     public float hp = 1;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Diagnostics;
-[DebuggerStepThrough]
+//[DebuggerStepThrough]
 public class Health : MonoBehaviour
     
 {

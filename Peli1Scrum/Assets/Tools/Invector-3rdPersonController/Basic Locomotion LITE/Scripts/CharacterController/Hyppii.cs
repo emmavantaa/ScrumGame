@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Invector.CharacterController;
 using UnityEngine;
 using System.Diagnostics;
-[DebuggerStepThrough]
+//[DebuggerStepThrough]
 
 public class Hyppii : MonoBehaviour
 {

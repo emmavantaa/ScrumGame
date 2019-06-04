@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 
-[DebuggerStepThrough]
+//[DebuggerStepThrough]
 public class Keräily : MonoBehaviour
 {
     GameObject meleeWeapon;

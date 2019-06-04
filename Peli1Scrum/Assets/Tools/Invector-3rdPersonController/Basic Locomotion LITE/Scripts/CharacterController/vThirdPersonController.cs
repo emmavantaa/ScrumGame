@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace Invector.CharacterController
 {
-    [DebuggerStepThrough]
+    //[DebuggerStepThrough]
     public class vThirdPersonController : vThirdPersonAnimator
     {
         protected virtual void Start()
