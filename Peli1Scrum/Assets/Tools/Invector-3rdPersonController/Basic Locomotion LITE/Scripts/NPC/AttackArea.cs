@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Diagnostics;
+[DebuggerStepThrough]
 public class AttackArea : MonoBehaviour
 {
 
@@ -23,12 +24,21 @@ public class AttackArea : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerInTerritory == true)
+        if (playerInTerritory == true&&basicenemy.backOffFromPlayer==false&&basicenemy.backOff==false&&basicenemy.wait==false&&basicenemy.dashAttack==false)
         {
-            basicenemy.MoveToPlayer();
+            if (basicenemy.target.position.y>basicenemy.transform.position.y+1f && basicenemy.target.position.y < basicenemy.transform.position.y + 3f)
+            {
+                basicenemy.targetTooHigh = true;
+            }
+            else
+            {
+                basicenemy.targetTooHigh = false;
+                basicenemy.MoveToPlayer();
+            }
+
         }
 
-        if (playerInTerritory == false)
+        if (playerInTerritory == false&&basicenemy.GoToRest==false)
         {
             basicenemy.Rest();
         }
@@ -46,9 +56,23 @@ public class AttackArea : MonoBehaviour
     {
         if (other.gameObject == player)
         {
+            basicenemy.GoToRest = false;
             playerInTerritory = false;
         }
     }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (basicenemy.GoToRest==true&&Time.time> basicenemy.restingTime+ 5f)
+        {
+            basicenemy.GoToRest = false;
+        }
+        else if (other.gameObject == player)
+        {
+            playerInTerritory = true;
+        }
+    }
+
 }
 
 

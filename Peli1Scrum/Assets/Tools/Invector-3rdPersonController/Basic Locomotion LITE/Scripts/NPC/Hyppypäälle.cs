@@ -1,16 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Diagnostics;
+//[DebuggerStepThrough]
 public class Hyppypäälle : MonoBehaviour
 {
     GameObject player;
+    GameObject colliderPäähän;
     VihuHealth vihuHealth;
     public GameObject enemy;
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        colliderPäähän = GameObject.Find("VihunPäälleHyppyCollider");
         vihuHealth = enemy.GetComponent<VihuHealth>();
         
 
@@ -24,10 +27,14 @@ public class Hyppypäälle : MonoBehaviour
     private void OnTriggerEnter(Collider other)
 
     {
-        if (other.gameObject == player&&enemy!=null&&vihuHealth.immortal==false)
+        if (colliderPäähän!=null&&other.gameObject==colliderPäähän&& enemy != null && vihuHealth.immortal == false)
         {
-           enemy.GetComponent<VihuHealth>().takeDamage();
-
+            enemy.GetComponent<VihuHealth>().takeDamage();
         }
+        //if (other.gameObject == player&&enemy!=null&&vihuHealth.immortal==false)
+        //{
+        //   enemy.GetComponent<VihuHealth>().takeDamage();
+
+        //}
     }
 }

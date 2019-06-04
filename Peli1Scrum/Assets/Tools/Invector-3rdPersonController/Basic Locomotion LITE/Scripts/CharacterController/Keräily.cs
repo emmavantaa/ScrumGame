@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
+[DebuggerStepThrough]
 public class Keräily : MonoBehaviour
 {
     GameObject meleeWeapon;
@@ -52,6 +54,11 @@ public class Keräily : MonoBehaviour
         if (other.gameObject.name=="HealthPack")
         {
             player.gameObject.GetComponent<Health>().MoreHealth();
+            Destroy(other.gameObject);
+        }
+        if (other.gameObject.tag=="Soul")
+        {
+            player.gameObject.GetComponent<Soul>().CollectSoul();
             Destroy(other.gameObject);
         }
     }

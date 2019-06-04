@@ -4,12 +4,15 @@ using System;
 using System.Collections;
 using Invector;
 using UnityEngine.EventSystems;
+using System.Diagnostics;
 
 namespace Invector.CharacterController
 {
+    [DebuggerStepThrough]
     public abstract class vThirdPersonMotor : MonoBehaviour
     {
-        GameObject miekka;
+        GameObject player;
+        Hyppii hii;
         #region Variables        
 
         #region Layers
@@ -54,7 +57,7 @@ namespace Invector.CharacterController
         [Tooltip("Add Extra jump speed, based on your speed input the character will move forward")]
         public float jumpForward = 3f;
         [Tooltip("Add Extra jump height, if you want to jump only with Root Motion leave the value with 0.")]
-        public float jumpHeight = 4f;
+        public float jumpHeight = 0f;
 
         [Header("--- Movement Speed ---")]
         [Tooltip("Check to drive the character using RootMotion of the animation")]
@@ -108,8 +111,8 @@ namespace Invector.CharacterController
 
         private void Awake()
         {
-            miekka = GameObject.FindGameObjectWithTag("Miekka");
-            var kk = 1;
+            player = GameObject.FindGameObjectWithTag("Player");
+            hii = player.GetComponent<Hyppii>();
         }
 
         protected void RemoveComponents()
@@ -177,8 +180,13 @@ namespace Invector.CharacterController
             // slides the character through walls and edges
             frictionPhysics = new PhysicMaterial();
             frictionPhysics.name = "frictionPhysics";
-            frictionPhysics.staticFriction = .25f;
-            frictionPhysics.dynamicFriction = .25f;
+            //frictionPhysics.staticFriction = .25f;
+            //frictionPhysics.dynamicFriction = .25f;
+
+            //Jos haluaa fysiikka knockbackin toimivan
+            frictionPhysics.staticFriction = 1f;
+            frictionPhysics.dynamicFriction = 1f;
+
             frictionPhysics.frictionCombine = PhysicMaterialCombine.Multiply;
 
             // prevents the collider from slipping on ramps
@@ -300,6 +308,7 @@ namespace Invector.CharacterController
         protected void ControlJumpBehaviour()
         {
             if (!isJumping) return;
+            if (hii.hyppii) return;
 
             jumpCounter -= Time.deltaTime;
             if (jumpCounter <= 0)
@@ -318,6 +327,7 @@ namespace Invector.CharacterController
         {
             if (isGrounded) return;
             if (!jumpFwdCondition) return;
+            if (hii.hyppii) return;
 
             var velY = transform.forward * jumpForward * speed;
             velY.y = _rigidbody.velocity.y;
@@ -366,10 +376,19 @@ namespace Invector.CharacterController
             // change the physics material to very slip when not grounded or maxFriction when is
             if (isGrounded && input == Vector2.zero)
                 _capsuleCollider.material = maxFrictionPhysics;
+            else if (hii != null && hii.hyppii == true)
+            {
+                _capsuleCollider.material = maxFrictionPhysics;
+            }
             else if (isGrounded && input != Vector2.zero)
                 _capsuleCollider.material = frictionPhysics;
-            else
+
+            else if (hii != null && hii.hyppii == false)
+            {
                 _capsuleCollider.material = slippyPhysics;
+            }
+            
+                
 
             var magVel = (float)System.Math.Round(new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z).magnitude, 2);
             magVel = Mathf.Clamp(magVel, 0, 1);
@@ -383,15 +402,26 @@ namespace Invector.CharacterController
             if (groundDistance <= 0.05f)
             {
                 isGrounded = true;
-                //miekka.GetComponent<Miekka>().hyppii = false;
+                //if (hii != null)
+                //{
+                //    hii.hyppii = false;
+                //}
                 Sliding();
             }
             else
             {
-                if (groundDistance >= groundCheckDistance)
+                if (hii.hyppii)
+                {
+                    _rigidbody.AddForce(transform.up * (extraGravity * 4 * Time.deltaTime), ForceMode.VelocityChange);
+                }
+                else if (groundDistance >= groundCheckDistance)
                 {
                     isGrounded = false;
-                    //miekka.GetComponent<Miekka>().hyppii = true;
+                    //if (hii != null)
+                    //{
+                    //    hii.hyppii = true;
+                    //}
+                    
                     // check vertical velocity
                     verticalVelocity = _rigidbody.velocity.y;
                     // apply extra gravity when falling
@@ -402,6 +432,7 @@ namespace Invector.CharacterController
                 {
                     _rigidbody.AddForce(transform.up * (extraGravity * 2 * Time.deltaTime), ForceMode.VelocityChange);
                 }
+
             }
         }
 
@@ -456,7 +487,10 @@ namespace Invector.CharacterController
             {
                 isSliding = true;
                 isGrounded = false;
-                //miekka.GetComponent<Miekka>().hyppii = true;
+                //if (hii != null)
+                //{
+                //    hii.hyppii = true;
+                //}
                 var slideVelocity = (GroundAngle() - slopeLimit) * 2f;
                 slideVelocity = Mathf.Clamp(slideVelocity, 0, 10);
                 _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, -slideVelocity, _rigidbody.velocity.z);
@@ -465,7 +499,10 @@ namespace Invector.CharacterController
             {
                 isSliding = false;
                 isGrounded = true;
-                //miekka.GetComponent<Miekka>().hyppii = false;
+                //if (hii != null)
+                //{
+                //    hii.hyppii = false;
+                //}
             }
         }
 

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using System.Diagnostics;
+[DebuggerStepThrough]
 public class Health : MonoBehaviour
     
 {
@@ -34,6 +35,23 @@ public class Health : MonoBehaviour
         if (immortalMoment&& Time.time>=+time1+ immortalityTime)
         {
             immortalMoment = false;
+
+
+        }
+        if (immortalMoment)
+        {
+            if (player.GetComponent<ImmortalEmission>())
+            {
+                player.GetComponent<ImmortalEmission>().EmissionOn();
+            }
+            
+        }
+        if (immortalMoment==false)
+        {
+            if (player.GetComponent<ImmortalEmission>())
+            {
+                player.GetComponent<ImmortalEmission>().EmissionOff();
+            }
         }
     }
     private void FixedUpdate()

@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Diagnostics;
+[DebuggerStepThrough]
 public class BridgeEnemyAttackArea : MonoBehaviour
 {
     public BoxCollider territory;
@@ -25,7 +26,6 @@ public class BridgeEnemyAttackArea : MonoBehaviour
         if (playerInTerritory == true)
         {
             bridgeEnemy.AttackPlayer();
-            var tt = 1;
         }
 
         if (playerInTerritory == false)

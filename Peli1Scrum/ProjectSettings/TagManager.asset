@@ -7,6 +7,9 @@ TagManager:
   - Enemy
   - Miekka
   - VihunAlue
+  - Soul
+  - Lava
+  - Kasvis
   layers:
   - Default
   - TransparentFX

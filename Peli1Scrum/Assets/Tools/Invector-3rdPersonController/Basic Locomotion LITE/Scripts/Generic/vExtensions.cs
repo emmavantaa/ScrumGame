@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 
 namespace Invector
 {
+    [System.Diagnostics.DebuggerStepThrough]
     public static class vExtensions
     {
         public static T[]  Append<T>(this T[] arrayInitial, T[] arrayToAppend) 
@@ -114,27 +116,27 @@ namespace Invector
             Ray toTop = new Ray(boxPoint.top, boxPoint.top- torso.position);
             Ray toCenter = new Ray(torso.position, boxPoint.center - torso.position);
             Ray toBottom = new Ray(torso.position, boxPoint.bottom - torso.position);
-            Debug.DrawRay(toTop.origin, toTop.direction, Color.red, 2);
-            Debug.DrawRay(toCenter.origin, toCenter.direction, Color.green, 2);
-            Debug.DrawRay(toBottom.origin, toBottom.direction, Color.blue, 2);
+            UnityEngine.Debug.DrawRay(toTop.origin, toTop.direction, Color.red, 2);
+            UnityEngine.Debug.DrawRay(toCenter.origin, toCenter.direction, Color.green, 2);
+            UnityEngine.Debug.DrawRay(toBottom.origin, toBottom.direction, Color.blue, 2);
             RaycastHit hit;
             var dist = Vector3.Distance(torso.position, boxPoint.top);
             if (Physics.Raycast(toTop,out hit, dist, mask))
             {
                 bp |= HitBarPoints.Top;
-                Debug.Log(hit.transform.name);
+                UnityEngine.Debug.Log(hit.transform.name);
             }
             dist = Vector3.Distance(torso.position, boxPoint.center);
             if (Physics.Raycast(toCenter, out hit, dist,mask))
             {
                 bp |= HitBarPoints.Center;
-                Debug.Log(hit.transform.name);
+                UnityEngine.Debug.Log(hit.transform.name);
             }
             dist = Vector3.Distance(torso.position, boxPoint.bottom);
             if (Physics.Raycast(toBottom, out hit, dist, mask))
             {
                 bp |= HitBarPoints.Bottom;
-                Debug.Log(hit.transform.name);
+                UnityEngine.Debug.Log(hit.transform.name);
             }
 
             return bp;

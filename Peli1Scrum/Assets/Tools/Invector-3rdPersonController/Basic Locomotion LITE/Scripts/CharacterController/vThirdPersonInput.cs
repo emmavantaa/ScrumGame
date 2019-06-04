@@ -2,11 +2,15 @@
 #if UNITY_5_3_OR_NEWER
 using UnityEngine.SceneManagement;
 #endif
+using System.Diagnostics;
 
 namespace Invector.CharacterController
 {
+    [DebuggerStepThrough]
     public class vThirdPersonInput : MonoBehaviour
     {
+        GameObject player;
+        Hyppii hii;
         #region variables
 
         [Header("Default Inputs")]
@@ -39,7 +43,9 @@ namespace Invector.CharacterController
         #endregion
         private void Awake()
         {
-            kiipeäminen=gameObject.GetComponent<Kiipeäminen>();
+            player = GameObject.FindGameObjectWithTag("Player");
+            hii = player.GetComponent<Hyppii>();
+            kiipeäminen =gameObject.GetComponent<Kiipeäminen>();
         }
 
         protected virtual void Start()
@@ -113,11 +119,15 @@ namespace Invector.CharacterController
                 cc.Sprint(true);
             else if(Input.GetKeyUp(sprintInput))
                 cc.Sprint(false);
+            else if ((Input.GetKey(sprintInput)==false))
+            {
+                cc.Sprint(false);
+            }
         }
 
         protected virtual void JumpInput()
         {
-            if (Input.GetKeyDown(jumpInput))
+            if (Input.GetKeyDown(jumpInput)&&hii.hyppii==false&&cc.isJumping==false)
                 cc.Jump();
 
 
@@ -159,10 +169,12 @@ namespace Invector.CharacterController
             tpCamera.RotateCamera(X, Y);
 
             // tranform Character direction from camera if not KeepDirection
-            if (!keepDirection)
+            if (!cc.keepDirection)
+            {
                 cc.UpdateTargetDirection(tpCamera != null ? tpCamera.transform : null);
-            // rotate the character with the camera while strafing        
-            RotateWithCamera(tpCamera != null ? tpCamera.transform : null);            
+                // rotate the character with the camera while strafing        
+                RotateWithCamera(tpCamera != null ? tpCamera.transform : null);
+            }
         }
 
         protected virtual void UpdateCameraStates()

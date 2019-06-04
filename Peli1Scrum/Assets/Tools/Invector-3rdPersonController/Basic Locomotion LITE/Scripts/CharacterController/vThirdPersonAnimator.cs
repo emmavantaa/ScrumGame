@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Invector.CharacterController
 {
+    [DebuggerStepThrough]
     public abstract class vThirdPersonAnimator : vThirdPersonMotor
     {
         public virtual void UpdateAnimator()
