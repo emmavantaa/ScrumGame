@@ -11,6 +11,7 @@ TagManager:
   - CarrotWall
   - BunnyAmmo
   - AmmoBun
+  - SpawnAmmo
   layers:
   - Default
   - TransparentFX
