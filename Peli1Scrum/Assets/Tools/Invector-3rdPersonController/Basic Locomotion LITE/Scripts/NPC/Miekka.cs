@@ -7,28 +7,40 @@ using System.Diagnostics;
 public class Miekka : MonoBehaviour
 {
     GameObject player;
-    Rigidbody rb;
+    GameObject collided;
     GameObject vihu;
-    public bool knockBack;
+    BoxCollider triggerCollider;
+    Rigidbody rb;
+    public bool fysiikkaKnockBack;
     public bool teleportKnockback;
-    public bool teleportKnockback2;
+    public bool moveTowardsKnockback;
+    public bool translateKnockBack;
     public bool hyppii;
     public bool collisionStay;
-    public bool forcea;
-    public bool forceaLess;
+    bool forcea;
+    bool forceaLess;
     public float timeOnCollisionStay;
-    public bool hidasta;
+    bool hidasta;
+    bool collisionHappened;
+    bool translateKnockBackToteuta;
     float speed = 16;
+    public float translateKnockBackVoima;
+    public float translateKesto;
+    float translateAlkamisaika;
     bool flyAway;
-    Vector3 pos;
+    public Vector3 targetPositio;
+    public float KnockBackVoimaIlmassa;
+    public float KnockBackVoima;
     public Vector3 osumaKohta;
     public Vector3 voimanSuunta;
     public Vector3 voimanSuunta2;
-    GameObject collided;
+    public Vector3 vihunSuunta;
+
     Hyppii hii;
     vThirdPersonMotor slippy;
     BasicEnemy basicEnemy;
     vThirdPersonController cc;
+
 
     
     
@@ -46,27 +58,14 @@ public class Miekka : MonoBehaviour
         Physics.IgnoreCollision(vihu.GetComponent<Collider>(), this.gameObject.GetComponent<Collider>());
         cc = player.GetComponent<vThirdPersonController>();
         hii = player.GetComponent<Hyppii>();
+        triggerCollider = player.GetComponentInChildren<BoxCollider>();
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (teleportKnockback2)
-        {
-            if (collided.transform.position == pos + (gameObject.transform.forward * 2))
-            {
-                flyAway = false;
-                collided.GetComponent<Rigidbody>().isKinematic = false;
-
-            }
-            if (flyAway)
-            {
-                collided.GetComponent<Rigidbody>().isKinematic = true;
-                float step = speed * Time.deltaTime;
-                collided.transform.position = Vector3.MoveTowards(collided.transform.position, pos + (gameObject.transform.forward * 2), step);
-            }
-        }
+        
     }
     //private void OnTriggerEnter(Collider other)
 
@@ -92,9 +91,52 @@ public class Miekka : MonoBehaviour
     //}
     private void FixedUpdate()
     {
+        if (collisionHappened && moveTowardsKnockback)
+        {
+
+            if (collided.transform.position == targetPositio)
+            {
+                flyAway = false;
+                collisionHappened = false;
+                //collided.GetComponent<Rigidbody>().isKinematic = false;
+
+            }
+            if (flyAway)
+            {
+                //collided.GetComponent<Rigidbody>().isKinematic = true;
+                float step = speed * Time.deltaTime;
+                collided.transform.position = Vector3.MoveTowards(collided.transform.position, targetPositio, step);
+            }
+        }
+        if (translateKnockBackToteuta&&collisionHappened&&translateKnockBack)
+        {
+            cc.jumpCounter = 0;
+            cc.isJumping = false;
+            collided.transform.Translate(Vector3.forward * (translateKnockBackVoima * Time.fixedDeltaTime),vihu.transform);
+            collided.GetComponent<Rigidbody>().AddForce(voimanSuunta * 55);//Jos on vikaa niin tämä rivi kommentointiin
+
+
+            if (!player.GetComponent<CheckSurroundings>().checkSurroundingsGrounded)//Jos on vikaa niin tämä rivi kommentointiin
+            {
+                //collided.GetComponent<Rigidbody>().AddForce(voimanSuunta * 55);
+
+                if (Time.time > translateAlkamisaika + translateKesto)
+                {
+                    translateKnockBackToteuta = false;
+                    collisionHappened = false;
+
+                    if (player.GetComponent<Health>().dead == false)
+                    {
+                        cc.lockMovement = false;
+                    }
+
+                }
+            }
+
+        }
+
         if (rb.velocity.magnitude>=200)
         {
-            var k = 9;
         }
         if (hidasta)
         {
@@ -103,15 +145,19 @@ public class Miekka : MonoBehaviour
         }
         else if (forceaLess)
         {
-            var t = 3;
-            collided.GetComponent<Rigidbody>().AddForce((voimanSuunta) * 277f, /*transform.position + new Vector3(0, -0.5f, 0)*/ ForceMode.Impulse);
+            //triggerCollider.enabled = enabled;
+            collided.GetComponent<Rigidbody>().AddForce(voimanSuunta * KnockBackVoimaIlmassa,ForceMode.Impulse);
+            
             forceaLess = false;
             hidasta = true;
         }
 
         else if (forcea&&cc.isGrounded)
         {
-            collided.GetComponent<Rigidbody>().AddForce((voimanSuunta) * 277, /*transform.position + new Vector3(0, -0.5f, 0)*/ ForceMode.Impulse);
+            //collided.GetComponent<Rigidbody>().AddExplosionForce(KnockBackVoima, osumaKohta+(Vector3.down*0.5f), 1f);
+            collided.GetComponent<Rigidbody>().AddForce(voimanSuunta * KnockBackVoima, ForceMode.Impulse);
+            //gameObject.GetComponent<Collider>().isTrigger = false;
+            //triggerCollider.enabled = enabled;
             forcea = false;
         }
 
@@ -124,6 +170,20 @@ public class Miekka : MonoBehaviour
             collided = collision.gameObject;
             basicEnemy.backOffFromPlayer = true;
             basicEnemy.collisionWithPlayerTime = Time.time;
+
+            osumaKohta = collision.contacts[0].point;
+
+            voimanSuunta = new Vector3(player.transform.position.x - osumaKohta.x, 0f, player.transform.position.z - osumaKohta.z);
+            voimanSuunta2 = player.transform.position - osumaKohta;
+
+            voimanSuunta.Normalize();
+            voimanSuunta2.Normalize();
+
+            if (player.GetComponent<Health>().immortalMoment == false)
+            {
+                targetPositio = collided.transform.position + (gameObject.transform.forward * 2);
+                collisionHappened = true;
+            }
         }
 
         if (collision.gameObject!=player)
@@ -136,13 +196,7 @@ public class Miekka : MonoBehaviour
             
         }
         
-        osumaKohta=collision.contacts[0].point;
 
-        voimanSuunta = new Vector3(player.transform.position.x - osumaKohta.x, 0f, player.transform.position.z - osumaKohta.z);
-        voimanSuunta2 = player.transform.position - osumaKohta;
-
-        voimanSuunta.Normalize();
-        voimanSuunta2.Normalize();
         //bool isJumping;
         //isJumping = GetComponent<vThirdPersonController>().isJumping;
         if (collision.gameObject == player && player.GetComponent<Health>().immortalMoment == false)
@@ -151,15 +205,15 @@ public class Miekka : MonoBehaviour
             {
                 collision.gameObject.transform.position = collision.gameObject.transform.position + (gameObject.transform.forward * 2);
             }
-            else if (teleportKnockback2&&flyAway==false)
+            else if (moveTowardsKnockback&&flyAway==false)
             {
 
                 //collided = collision.gameObject;
-                pos = collided.transform.position;
+                //pos = collided.transform.position;
                 flyAway = true;
                 
             }
-            else if (knockBack)
+            else if (fysiikkaKnockBack)
             {
                 if (cc.isJumping||!cc.isGrounded)
                 {
@@ -173,12 +227,14 @@ public class Miekka : MonoBehaviour
                 }
                 else
                 {
+                    //gameObject.GetComponent<Collider>().isTrigger = true;
                     forcea = true;
                 }
                 collided = collision.gameObject;
                 
-                
-                
+
+
+
 
                 //if (hyppii == false && !Input.GetKey("space"))
                 //{
@@ -201,17 +257,31 @@ public class Miekka : MonoBehaviour
                 //    collision.gameObject.GetComponent<Rigidbody>().AddExplosionForce(16, osumaKohta /*+ new Vector3(0, 1f, 0)*/, 0.5f, -0.1f, ForceMode.Impulse);
                 //}
             }
+            else if (translateKnockBack&&!translateKnockBackToteuta)
+            {
+                
+                hidasta = true; //Jos on vikaa niin tämä rivi kommentointiin
+                cc.lockMovement = true;
+                vihunSuunta = transform.forward.normalized;
+                translateKnockBackToteuta = true;
+                translateAlkamisaika = Time.time;
+            }
 
             //player.GetComponent<Rigidbody>().AddExplosionForce(1, transform.position, 1);
             //rb.AddExplosionForce(999, transform.position, 999);
+            player.GetComponent<Health>().hitByEnemy = true;
             player.GetComponent<Health>().TakeDamage();
 
         }
     }
     private void OnCollisionExit(Collision collision)
     {
-
-            basicEnemy.miekkaCollision = false;
+        if (collision.gameObject==player)
+        {
+            //collisionHappened = false;
+        }
+        
+        basicEnemy.miekkaCollision = false;
         
         collisionStay = false;
     }
@@ -221,11 +291,13 @@ public class Miekka : MonoBehaviour
         {
             collisionStay = true;
             timeOnCollisionStay = Time.time;
+            //basicEnemy.backOff = true;//Tämä rivi on testi. En oo vielä varma toimiiko
 
         }
         else if (Time.time>timeOnCollisionStay+2)
         {
             basicEnemy.GoToRest = true;
+            basicEnemy.restingTime = Time.time;
         }
         if (collision.gameObject != player)
         {

@@ -9,9 +9,8 @@ public class Keräily : MonoBehaviour
     GameObject meleeWeapon;
     GameObject meleeWeaponPlace;
     GameObject player;
-    public Rigidbody rb;
-    public Collider col;
-    public bool collected;
+    [HideInInspector]
+    public bool collectedMelee;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,7 +32,7 @@ public class Keräily : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (/*other==meleeWeapon*/ other.gameObject.name == "MeleeWeapon" && collected == false)
+        if (/*other==meleeWeapon*/ other.gameObject.name == "MeleeWeapon" && collectedMelee == false)
         {
 
             meleeWeapon.transform.parent = transform;
@@ -49,7 +48,7 @@ public class Keräily : MonoBehaviour
 
             //meleeWeapon.transform.LookAt(player.transform.forward);
             //meleeWeapon.transform.Rotate(new Vector3(0, -90, 0), Space.Self);
-            collected = true;
+            collectedMelee = true;
         }
         if (other.gameObject.name=="HealthPack")
         {
@@ -58,7 +57,7 @@ public class Keräily : MonoBehaviour
         }
         if (other.gameObject.tag=="Soul")
         {
-            player.gameObject.GetComponent<Soul>().CollectSoul();
+            player.gameObject.GetComponent<SoulCollector>().CollectSoul();
             Destroy(other.gameObject);
         }
     }

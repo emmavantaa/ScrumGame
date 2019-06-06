@@ -5,6 +5,9 @@ using System.Diagnostics;
 //[DebuggerStepThrough]
 
 // Start is called before the first frame update
+
+    
+//////////Tähän scriptiin tuli paljon muutosta, niin pitää päivittää selitykset//////////
 public class BasicEnemy : MonoBehaviour
 {
     public Transform target;
@@ -32,18 +35,20 @@ public class BasicEnemy : MonoBehaviour
     public float hitCountTimer;
     public int hitCount;
     public GameObject player;
+    //osan näistä booleista vois tehä metoideiks
     public bool dashAttack;
     public bool miekkaCollision;
     public bool wait;
     public bool waitForDash;
-    public bool backOff;
+    public bool backOff; //backoff pitäis saada toimimaan paremmin GoToRest kanssa koska jää jumittamaan seinään jos sen starting point on suoraan sen takana
     public bool forward;
     public bool backOffFromPlayer;
     public bool GoToRest;
     public bool stop;
     public bool targetTooHigh;
-    public bool resti;
     public bool rightDirection;
+    public bool moveTowardsPlayer;
+    public bool resti;
     public Vector3 startingPoint;
     public Vector3 targetDir;
     public Vector3 newDir;
@@ -85,16 +90,16 @@ public class BasicEnemy : MonoBehaviour
         {
             startingPoint = transform.position;
         }
-        Ray collisionCheckRay = new Ray(transform.position + new Vector3(0f, 0.1f, 0f), transform.forward);
-        UnityEngine.Debug.DrawRay(collisionCheckRay.origin, transform.forward,color: Color.cyan,2f);
+
 
         //Jos on ongelmia, että miekka menee seinän sisään, niin tämä käyttöön
         //Jos miekka on seinän sisällä (koska silloin raycast osuisi seinään), niin vihollinen menee restaamaan
-        if (Physics.Raycast(collisionCheckRay, maxDistance: 0.5f))
-        {
-            GoToRest = true;
-            restingTime = Time.time;
-        }
+        //if (Physics.Raycast(collisionCheckRay, maxDistance: 0.5f))
+        //{
+        //    //backOff = true;
+        //    GoToRest = true;
+        //    restingTime = Time.time;
+        //}
 
         if (GoToRest == true)
         {
@@ -110,6 +115,9 @@ public class BasicEnemy : MonoBehaviour
                 backOff = false;
                 backOffFromPlayer = false;
                 dashAttack = false;
+                stop = false;
+                wait = false;
+                waitForDash = false;
                 Rest();
                 
             }
@@ -144,11 +152,12 @@ public class BasicEnemy : MonoBehaviour
 
                 //Otetaan aika talteen törmäyksestä backOffia varten
                 collisionTime = Time.time;
-                backOff = true;
+                
 
                 //Jos osui dashilla, niin lopetetaan se ja otetaan aika talteen
                 if (dashAttack)
                 {
+                    backOff = true;
                     dashAttack = false;
                     attackStopTime = Time.time;
                 }
@@ -242,6 +251,7 @@ public class BasicEnemy : MonoBehaviour
             }
 
             //Dash hyöäkkäys pelaajaa kohti, jos pelaajaa ei ole juuri osunut (immortalMoment) + muut ehdot
+            //Jos haluaa, että viholliset dashaa pelaaja kohti kun immortalMoment, niin voi commentoida ton -> player.GetComponent<Health>().immortalMoment == false
             if (Vector3.Distance(transform.position, target.position) < dasHRange && dashAttack == false && wait == false && waitForDash == false &&
                 backOffFromPlayer == false && backOff == false && forward == false&& (player.GetComponent<Health>().immortalMoment == false))
             {
@@ -260,7 +270,10 @@ public class BasicEnemy : MonoBehaviour
                 newDirDash.y = 0;
 
                 //Kääntyminen
-                transform.rotation = Quaternion.LookRotation(newDirDash);
+                var rayCastDirection= Quaternion.LookRotation(newDirDash);
+
+                Ray collisionCheckRay = new Ray(transform.position + new Vector3(0f, 0.1f, 0f), newDirDash);
+                UnityEngine.Debug.DrawRay(collisionCheckRay.origin, transform.forward, color: Color.cyan, 2f);
 
                 //Pelaajan x ja z suunta + 0.001f vihollisesta katsottuna
                 var targetXPlus= targetDirY0Normalized.x+0.001f;
@@ -275,35 +288,37 @@ public class BasicEnemy : MonoBehaviour
                 var thisz = thisDirNormalized.z;
 
                 //Dash hyökkäys pelaajan epätarkkaa suuntaa kohti (jos olisi tarkka suunta, niin viholliset pysähtyisivät odottamaan pelaajan pysähtymistä)
-                if ((thisx< targetXPlus && thisx>targetXMinus) ||thisz< targetZPlus && thisz>targetZMinus)
+                if (!Physics.Raycast(collisionCheckRay, maxDistance: Vector3.Distance(transform.position, target.position) - 0.5f))
                 {
                     //Tarkistetaan että vihollisen ja pelaajan välissä ei ole estettä
-                    if (!Physics.Raycast(collisionCheckRay, maxDistance: Vector3.Distance(transform.position, target.position) - 0.5f))
+                    transform.rotation = Quaternion.LookRotation(newDirDash);
+                    if ((thisx < targetXPlus && thisx > targetXMinus) || thisz < targetZPlus && thisz > targetZMinus)
                     {
 
+                    
+                    //UnityEngine.Debug.DrawRay(transform.position, transform.forward.normalized * 7, Color.red, 2f);
+                    dashAttack = true;
 
-                        //UnityEngine.Debug.DrawRay(transform.position, transform.forward.normalized * 7, Color.red, 2f);
-                        dashAttack = true;
-
-                        //Otetaan aika talteen jolloin hyökkäys alkaa
-                        attackStartTime = Time.time;
+                    //Otetaan aika talteen jolloin hyökkäys alkaa
+                    attackStartTime = Time.time;
                     }
 
-                    //Muuten vihollinen liikkuu ensin estettä kohti ja törmäyksestä alkaa kiertää estettä
                     else
                     {
-                        forward = true;
-                        stop = false;
-
+                        //stop = true;
                     }
+                    //Muuten vihollinen liikkuu ensin estettä kohti ja törmäyksestä alkaa kiertää estettä
+
                 }
 
                 //Muuten odottaa, että on kääntynyt suunnilleen pelaajaa kohti
                 else
                 {
-                    stop = true;
+                    MoveToPlayer();
+                    stop = false;
+
                 }
-                
+
             }
 
             //Jos pelaajan ja vihollisen välimatka on kasvanut suuremmaksi kuin dasHRange
@@ -319,14 +334,33 @@ public class BasicEnemy : MonoBehaviour
     {
         if (GoToRest == false&&stop==false)
         {
+            moveTowardsPlayer = true;
+            resti = false;
+
             Ray lavaFallCheckRay = new Ray(transform.position + (transform.forward * 0.5f), -transform.up);
-            RaycastHit lavaFallCheckRayHit = new RaycastHit();
-            UnityEngine.Debug.DrawRay(lavaFallCheckRay.origin, -transform.up.normalized * 2, Color.black, 10f);
+            Ray lavaFallCheckRayLeft = new Ray(transform.position + (-transform.right * 0.5f), -transform.up);
+            Ray lavaFallCheckRayRight = new Ray(transform.position + (transform.right * 0.5f), -transform.up);
+            Ray collisionCheckRay = new Ray(transform.position + new Vector3(0f, 0.1f, 0f), transform.forward);
+            Ray collisionCheckRayLeft = new Ray(transform.position + new Vector3(0f, 0.1f, 0f) + (-transform.right * 0.5f), -transform.right);
+            Ray collisionCheckRayRight = new Ray(transform.position + new Vector3(0f, 0.1f, 0f) + (transform.right * 0.5f), transform.right);
+            RaycastHit lavaFallCheckRayHit;
+
+            //UnityEngine.Debug.DrawRay(lavaFallCheckRay.origin, -transform.up.normalized * 2, Color.black, 10f);
 
             //Jos edessä ei ole tyhjää tai laavaa
-            if (Physics.Raycast(lavaFallCheckRay, maxDistance: 2f, hitInfo: out lavaFallCheckRayHit) && lavaFallCheckRayHit.collider.tag != ("Lava")&&rightDirection==false)
+            if (Physics.Raycast(lavaFallCheckRay, maxDistance: 2f, hitInfo: out lavaFallCheckRayHit) && lavaFallCheckRayHit.collider.tag != ("Lava")&&rightDirection==false &&
+                    (!Physics.Raycast(collisionCheckRay, 0.9f)))
             {
-                targetDir = target.position - transform.position;
+                //Jos oikealle eikä vasemalle osu raycast, niin suunta startingpointia kohti
+                if (!Physics.Raycast(collisionCheckRayLeft, 0.9f) && !Physics.Raycast(collisionCheckRayRight, 0.9f))
+                {
+                    targetDir = target.position - transform.position;
+                }
+                //Jos oikealle tai vasemalle osuu raycast, niin suunta eteenpäin
+                else
+                {
+                    targetDir = transform.forward;
+                }
 
                 // The step size is equal to speed times frame time.
                 float step = (turnSpeed) * Time.deltaTime;
@@ -343,11 +377,51 @@ public class BasicEnemy : MonoBehaviour
                 }
 
                 //move towards player
-                if (/*player.GetComponent<Health>().immortalMoment == false &&*/ dashAttack == false && wait == false && backOff == false)
+                //Jos haluaa, että viholliset ei liiku pelaaja kohti kun immortalMoment, niin voi uncommentoida ton -> player.GetComponent<Health>().immortalMoment == false &&
+                if (/*player.GetComponent<Health>().immortalMoment == false &&*/ dashAttack == false && wait == false && backOff == false&&!targetTooHigh)
                 {
                     transform.Translate(Vector3.forward * (speed * Time.deltaTime));
                 }
             }
+
+            //Ray check, että vasemmalla ei ole tyhjää tai laavaa tai estettä, jos ei ole niin kääntyy vasemman kautta starting pointin suuntaan ja liikkuu starting pointin suuntaan
+            else if (Physics.Raycast(lavaFallCheckRayLeft, maxDistance: 2f, hitInfo: out lavaFallCheckRayHit) && lavaFallCheckRayHit.collider.tag != ("Lava") && !rightDirection &&
+                    (!Physics.Raycast(collisionCheckRayLeft, 0.9f)))
+            {
+                targetDir =  target.position.normalized - (-transform.right.normalized);
+
+                // The step size is equal to speed times frame time.
+                float step = turnSpeed * Time.deltaTime;
+
+                newDir = Vector3.RotateTowards(-transform.right, targetDir, step, 0.0f);
+                UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
+                newDir.y = 0;
+
+                // Move our position a step closer to the target.
+                transform.rotation = Quaternion.LookRotation(newDir);
+
+                transform.Translate(Vector3.forward * (speed * Time.deltaTime));
+            }
+
+            //Ray check, että oikealla ei ole tyhjää tai laavaa tai estettä, jos ei ole niin kääntyy oikean kautta starting pointin suuntaan ja liikkuu starting pointin suuntaan
+            else if (Physics.Raycast(lavaFallCheckRayRight, maxDistance: 2f, hitInfo: out lavaFallCheckRayHit) && lavaFallCheckRayHit.collider.tag != ("Lava") && !rightDirection &&
+                    (!Physics.Raycast(collisionCheckRayRight, 0.9f)))
+            {
+                targetDir = target.position.normalized - (transform.right.normalized);
+
+                // The step size is equal to speed times frame time.
+                float step = turnSpeed * Time.deltaTime;
+
+                newDir = Vector3.RotateTowards(transform.right, targetDir, step, 0.0f);
+                UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
+                newDir.y = 0;
+
+                // Move our position a step closer to the target.
+                transform.rotation = Quaternion.LookRotation(newDir);
+
+                transform.Translate(Vector3.forward * (speed * Time.deltaTime));
+            }
+
 
             else
             {
@@ -356,26 +430,46 @@ public class BasicEnemy : MonoBehaviour
         }
     }
 
+    //Tuli muutoksia. Vois päivittää selitykset
     //Vihollinen menee aloituspaikkaansa kohti, kuitenkaan koskaan pääsemättä sinne joten se pyörii sen ympärillä
     public void Rest()
     {
         if (transform.position!=startingPoint)
         {
+            resti = true;
+            moveTowardsPlayer = false;
+
             Ray lavaFallCheckRay = new Ray(transform.position + (transform.forward * 0.5f), -transform.up);
             Ray lavaFallCheckRayLeft = new Ray(transform.position + (-transform.right * 0.5f), -transform.up);
             Ray lavaFallCheckRayRight = new Ray(transform.position + (transform.right * 0.5f), -transform.up);
+            Ray collisionCheckRay = new Ray(transform.position + new Vector3(0f, 0.1f, 0f), transform.forward);
+            Ray collisionCheckRayLeft = new Ray(transform.position + new Vector3(0f, 0.1f, 0f) + (-transform.right * 0.5f), -transform.right);
+            Ray collisionCheckRayRight = new Ray(transform.position + new Vector3(0f, 0.1f, 0f) + (transform.right * 0.5f), transform.right);
             RaycastHit lavaFallCheckRayHit = new RaycastHit();
             UnityEngine.Debug.DrawRay(lavaFallCheckRay.origin, -transform.up.normalized * 2, Color.black, 10f);
+            Vector3 targetDir;
+            Vector3 newDir;
 
-            //Ray check, että edessä ei ole tyhjää tai laavaa jos ei ole niin kääntyy ja liikkuu starting pointin suuntaan
-            if (Physics.Raycast(lavaFallCheckRay, maxDistance: 2f, hitInfo: out lavaFallCheckRayHit) && lavaFallCheckRayHit.collider.tag != ("Lava")&&!rightDirection)
+            //Ray check, että edessä ei ole tyhjää tai laavaa tai estettä, jos ei ole niin kääntyy ja liikkuu starting pointin suuntaan
+            if (Physics.Raycast(lavaFallCheckRay, maxDistance: 2f, hitInfo: out lavaFallCheckRayHit) && lavaFallCheckRayHit.collider.tag != ("Lava")&&!rightDirection &&
+                    (!Physics.Raycast(collisionCheckRay, 0.9f)))
             {
-                Vector3 targetDir = startingPoint + target.position.normalized - transform.position;
+                //Jos oikealle eikä vasemalle osu raycast, niin suunta startingpointia kohti
+                if (!Physics.Raycast(collisionCheckRayLeft, 0.9f)&& !Physics.Raycast(collisionCheckRayRight, 0.9f))
+                {
+                    targetDir = startingPoint + target.position.normalized - transform.position;
+                }
+                //Jos oikealle tai vasemalle osuu raycast, niin suunta eteenpäin
+                else
+                {
+                    targetDir = transform.forward;
+                }
+                
 
                 // The step size is equal to speed times frame time.
                 float step = turnSpeed * Time.deltaTime;
 
-                Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
+                newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
                 UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
                 newDir.y = 0;
 
@@ -385,15 +479,16 @@ public class BasicEnemy : MonoBehaviour
                 transform.Translate(Vector3.forward * (speed * Time.deltaTime));
             }
 
-            //Ray check, että vasemmalla ei ole tyhjää tai laavaa jos ei ole niin kääntyy vasemman kautta starting pointin suuntaan ja liikkuu starting pointin suuntaan
-            else if (Physics.Raycast(lavaFallCheckRayLeft, maxDistance: 2f, hitInfo: out lavaFallCheckRayHit) && lavaFallCheckRayHit.collider.tag != ("Lava") && !rightDirection)
+            //Ray check, että vasemmalla ei ole tyhjää tai laavaa tai estettä, jos ei ole niin kääntyy vasemman kautta starting pointin suuntaan ja liikkuu starting pointin suuntaan
+            else if (Physics.Raycast(lavaFallCheckRayLeft, maxDistance: 2f, hitInfo: out lavaFallCheckRayHit) && lavaFallCheckRayHit.collider.tag != ("Lava") && !rightDirection&&
+                    (!Physics.Raycast(collisionCheckRayLeft, 0.9f)))
             {
-                Vector3 targetDir = startingPoint + target.position.normalized - transform.position;
+                targetDir = startingPoint + target.position.normalized - (-transform.right.normalized);
 
                 // The step size is equal to speed times frame time.
                 float step = turnSpeed * Time.deltaTime;
 
-                Vector3 newDir = Vector3.RotateTowards(-transform.right, targetDir, step, 0.0f);
+                newDir = Vector3.RotateTowards(-transform.right, targetDir, step, 0.0f);
                 UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
                 newDir.y = 0;
 
@@ -403,15 +498,16 @@ public class BasicEnemy : MonoBehaviour
                 transform.Translate(Vector3.forward * (speed * Time.deltaTime));
             }
 
-            //Ray check, että oikealla ei ole tyhjää tai laavaa jos ei ole niin kääntyy oikean kautta starting pointin suuntaan ja liikkuu starting pointin suuntaan
-            else if (Physics.Raycast(lavaFallCheckRayRight, maxDistance: 2f, hitInfo: out lavaFallCheckRayHit) && lavaFallCheckRayHit.collider.tag != ("Lava") && !rightDirection)
+            //Ray check, että oikealla ei ole tyhjää tai laavaa tai estettä, jos ei ole niin kääntyy oikean kautta starting pointin suuntaan ja liikkuu starting pointin suuntaan
+            else if (Physics.Raycast(lavaFallCheckRayRight, maxDistance: 2f, hitInfo: out lavaFallCheckRayHit) && lavaFallCheckRayHit.collider.tag != ("Lava") && !rightDirection &&
+                    (!Physics.Raycast(collisionCheckRayRight, 0.9f)))
             {
-                Vector3 targetDir = startingPoint + target.position.normalized - transform.position;
+                targetDir = startingPoint + target.position.normalized - (transform.right.normalized );
 
                 // The step size is equal to speed times frame time.
                 float step = turnSpeed * Time.deltaTime;
 
-                Vector3 newDir = Vector3.RotateTowards(transform.right, targetDir, step, 0.0f);
+                newDir = Vector3.RotateTowards(transform.right, targetDir, step, 0.0f);
                 UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
                 newDir.y = 0;
 
@@ -422,39 +518,38 @@ public class BasicEnemy : MonoBehaviour
             }
 
             //Muuten kääntyy starting pointin suuntaan
-            else
-            {
-                rightDirection = true;
-                Vector3 targetDir = startingPoint + target.position.normalized - transform.position;
+            //else
+            //{
+            //    rightDirection = true;
+            //    Vector3 targetDir = startingPoint + target.position.normalized - transform.position;
 
-                // The step size is equal to speed times frame time.
-                float step = turnSpeed * Time.deltaTime;
+            //    // The step size is equal to speed times frame time.
+            //    float step = turnSpeed * Time.deltaTime;
 
-                Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir.normalized, step, 0.0f);
-                UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
-                newDir.y = 0;
+            //    Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir.normalized, step, 0.0f);
+            //    UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
+            //    newDir.y = 0;
 
-                // Move our position a step closer to the target.
-                transform.rotation = Quaternion.LookRotation(newDir);
+            //    // Move our position a step closer to the target.
+            //    transform.rotation = Quaternion.LookRotation(newDir);
 
-                //Suunta normaalit stringeiksi, että voi verrata
-                var forwardString = transform.forward.normalized.ToString();
-                var targetDirString = newDir.normalized.ToString();
+            //    //Suunta normaalit stringeiksi, että voi verrata
+            //    var forwardString = transform.forward.normalized.ToString();
+            //    var targetDirString = newDir.normalized.ToString();
 
-                //Jos on kääntynyt starting pointin suuntaan, niin rightDirection = false, joten voi alkaa taas testaamaan jos pääsee liikkumaan pelaajaa kohti
-                if (forwardString==targetDirString)
-                {
-                    rightDirection = false;
-                }
-            }
+            //    //Jos on kääntynyt starting pointin suuntaan, niin rightDirection = false, joten voi alkaa taas testaamaan jos pääsee liikkumaan pelaajaa kohti
+            //    if (forwardString==targetDirString)
+            //    {
+            //        rightDirection = false;
+            //    }
+            //}
 
         }
 
-        //Jos pääsee starting pointiin, esim. kun tippuu alemalle tasolle
+        //Jos pääsee starting pointiin
         else
         {
             transform.Translate(Vector3.forward * (speed * Time.deltaTime));
-            UnityEngine.Debug.Log("Vihu pääsi starting pointiin");
         }
 
     }

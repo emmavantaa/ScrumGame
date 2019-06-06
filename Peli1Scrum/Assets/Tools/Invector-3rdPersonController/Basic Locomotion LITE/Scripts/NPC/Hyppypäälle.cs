@@ -8,10 +8,11 @@ public class Hyppypäälle : MonoBehaviour
     GameObject player;
     GameObject colliderPäähän;
     VihuHealth vihuHealth;
-    public GameObject enemy;
+     GameObject enemy;
     // Start is called before the first frame update
     void Start()
     {
+        enemy = gameObject.transform.parent.gameObject;
         player = GameObject.FindGameObjectWithTag("Player");
         colliderPäähän = GameObject.Find("VihunPäälleHyppyCollider");
         vihuHealth = enemy.GetComponent<VihuHealth>();

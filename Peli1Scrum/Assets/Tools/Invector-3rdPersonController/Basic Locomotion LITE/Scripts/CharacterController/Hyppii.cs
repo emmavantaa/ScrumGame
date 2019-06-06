@@ -22,9 +22,9 @@ public class Hyppii : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (cc.isGrounded)
-        {
-            hyppii = false;
-        }
+        //if (cc.isGrounded)
+        //{
+        //    hyppii = false;
+        //}
     }
 }

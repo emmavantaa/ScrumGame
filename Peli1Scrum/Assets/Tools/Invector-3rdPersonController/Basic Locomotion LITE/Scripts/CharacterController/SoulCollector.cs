@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
 //[DebuggerStepThrough]
-public class Soul : MonoBehaviour
+public class SoulCollector : MonoBehaviour
 {
     public float collectedSouls = 0;
     bool soulCollected;
-
     public float showTextTime;
     float time1;
-    public bool showText;
-    public bool immortal;
+    bool showText;
 
     GUIStyle style = new GUIStyle();
     //public bool knockback;
@@ -34,23 +32,27 @@ public class Soul : MonoBehaviour
         if (soulCollected && Time.time >= +time1 + showTextTime)
         {
             showText = false;
-            soulCollected = false;
         }
 
     }
     public void CollectSoul()
     {
-            collectedSouls += 1;
+        collectedSouls += 1;
         soulCollected = true;
+        showText = true;
         time1 = Time.time;
 
     }
     private void OnGUI()
     {
-        if (soulCollected)
+        if (showText)
         {
-            GUI.Label(new Rect(400, 400, 200, 200), "You have collected a soul", style);
-            showText = true;
+            var centeredStyle = GUI.skin.GetStyle("Label");
+            centeredStyle.normal.textColor = Color.red;
+            centeredStyle.fontSize = 100;
+            centeredStyle.alignment = TextAnchor.UpperCenter;
+            GUI.Label(new Rect(Screen.width / 2 - 415, Screen.height / 2 - 255, 800, 400), "You have collected a soul", centeredStyle);
+
         }
     }
 

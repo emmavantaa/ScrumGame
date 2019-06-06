@@ -11,13 +11,13 @@ public class AttackArea : MonoBehaviour
     bool playerInTerritory;
 
     public GameObject enemy;
-    BasicEnemy basicenemy;
+    BasicEnemy basicEnemy;
 
     // Use this for initialization
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        basicenemy = enemy.GetComponent<BasicEnemy>();
+        basicEnemy = enemy.GetComponent<BasicEnemy>();
         playerInTerritory = false;
     }
 
@@ -32,24 +32,28 @@ public class AttackArea : MonoBehaviour
         //if (Physics.Raycast(lavaFallCheckRay, maxDistance: 2f, hitInfo: out lavaFallCheckRayHit) && lavaFallCheckRayHit.collider.tag != ("Lava"))
         //{
 
-            if (playerInTerritory == true && basicenemy.backOffFromPlayer == false && basicenemy.backOff == false && basicenemy.wait == false && basicenemy.dashAttack == false)
+        if (playerInTerritory == true && basicEnemy.backOffFromPlayer == false && basicEnemy.backOff == false && basicEnemy.wait == false && basicEnemy.dashAttack == false)
+        {
+            if (basicEnemy.target.position.y > basicEnemy.transform.position.y + 1f && basicEnemy.target.position.y < basicEnemy.transform.position.y + 3f)
             {
-                if (basicenemy.target.position.y > basicenemy.transform.position.y + 1f && basicenemy.target.position.y < basicenemy.transform.position.y + 3f)
-                {
-                    basicenemy.targetTooHigh = true;
-                }
-                else
-                {
-                    basicenemy.targetTooHigh = false;
-                    basicenemy.MoveToPlayer();
-                }
-
+                basicEnemy.targetTooHigh = true;
+                basicEnemy.MoveToPlayer();
+            }
+            else
+            {
+                basicEnemy.targetTooHigh = false;
+                basicEnemy.MoveToPlayer();
             }
 
-            if (playerInTerritory == false && basicenemy.GoToRest == false)
-            {
-                basicenemy.Rest();
-            }
+        }
+
+        if (playerInTerritory == false && basicEnemy.GoToRest == false)
+        {
+        basicEnemy.targetTooHigh = false;
+        basicEnemy.Rest();
+        //basicEnemy.GoToRest = true;
+        //basicEnemy.restingTime = Time.time;
+        }
         //}
         //else
         //{
@@ -69,16 +73,16 @@ public class AttackArea : MonoBehaviour
     {
         if (other.gameObject == player)
         {
-            basicenemy.GoToRest = false;
+            basicEnemy.GoToRest = false;
             playerInTerritory = false;
         }
     }
     [DebuggerStepThrough]
     private void OnTriggerStay(Collider other)
     {
-        if (basicenemy.GoToRest==true&&Time.time> basicenemy.restingTime+ 5f)
+        if (basicEnemy.GoToRest==true&&Time.time> basicEnemy.restingTime+ 5f)
         {
-            basicenemy.GoToRest = false;
+            basicEnemy.GoToRest = false;
         }
         else if (other.gameObject == player)
         {

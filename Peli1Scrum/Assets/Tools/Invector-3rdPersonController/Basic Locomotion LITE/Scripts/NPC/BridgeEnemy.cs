@@ -19,6 +19,7 @@ public class BridgeEnemy : MonoBehaviour
     public GameObject ase;
     public MoukariTaiJotain moukari;
     BridgeEnemy bridgeEnemy;
+    Transform knockBackSeuranta;
 
 
     // Use this for initialization
@@ -27,14 +28,15 @@ public class BridgeEnemy : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         bridgeEnemy = enemy.GetComponent<BridgeEnemy>();
         //ase = GameObject.Find("Ase");
-        //moukari = ase.GetComponent<MoukariTaiJotain>();
+        moukari = ase.GetComponent<MoukariTaiJotain>();
+        
         Rest();
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        
     }
 
     public void AttackPlayer()

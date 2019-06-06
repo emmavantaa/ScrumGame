@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
 //[DebuggerStepThrough]
+
+//////////Tähän scriptiin tuli paljon muutosta, niin pitää päivittää selitykset//////////
+
 public class Kiipeäminen : MonoBehaviour
 {
     vThirdPersonMotor pm;
@@ -19,43 +22,46 @@ public class Kiipeäminen : MonoBehaviour
 
     Vector3 tulevaPaikka;
     Vector3 tulevaPaikka1;
-    public Vector3 tulevaPaikka2;
+     Vector3 tulevaPaikka2;
     Vector3 paikka;
-    public Vector3 roikkumispaikka;
-    public float roikkumispaikkaY;
-    public Vector3 korjattuRoikkumisPaikka;
-    public Vector3 kielekkeenPaikka;
-    public Vector3 KielekkeenPaikkaHypystä;
+     Vector3 roikkumispaikka;
+     float roikkumispaikkaY;
+     Vector3 korjattuRoikkumisPaikka;
+     Vector3 kielekkeenPaikka;
+     Vector3 KielekkeenPaikkaHypystä;
+     Vector3 seinänPaikkaTiputtautumisesta;
 
     Rigidbody rb;
     CapsuleCollider col;
 
-    public bool liiku = false;
+     bool liiku = false;
+    [HideInInspector]
     public bool kesken = false;
-    public bool valmis = true;
-    public bool kiipeys = false;
+     bool valmis = true;
+     bool kiipeys = false;
+    [HideInInspector]
     public bool roiku;
-    public bool kiipeilyVasemmalle;
-    public bool kiipeilyOikealle;
-    public bool kiipeysRoikkumisesta;
-    public bool tipuRoikkumisesta;
-    public bool eka;
-    public bool vääräSuunta;
-    public bool roikuKielekkeellä;
-    public bool roikkuminenHypystä;
-    public bool eiVoiKiivetäVasemmalle;
-    public bool eiVoiKiivetäOikealle;
-    public bool capsuleOsuuVaultingissa;
+     bool kiipeilyVasemmalle;
+     bool kiipeilyOikealle;
+     bool kiipeysRoikkumisesta;
+     bool tipuRoikkumisesta;
+     bool eka;
+     bool roikuKielekkeellä;
+     bool roikkuminenHypystä;
+     bool tiputtautuminen;
+     bool eiVoiKiivetäVasemmalle;
+     bool eiVoiKiivetäOikealle;
+     bool capsuleOsuuVaultingissa;
 
-    public bool ray5PoisToiminnasta;
-    public bool ray4PoisToiminnasta;
-    public bool ray3PoisToiminnasta;
-    public bool ray2PoisToiminnasta;
-    public bool ray1PoisToiminnasta;
-    public bool ray0PoisToiminnasta;
+     bool ray5PoisToiminnasta;
+     bool ray4PoisToiminnasta;
+     bool ray3PoisToiminnasta;
+     bool ray2PoisToiminnasta;
+     bool ray1PoisToiminnasta;
+     bool ray0PoisToiminnasta;
 
-    public Vector3 orig;
-    public Vector3 dir;
+     Vector3 orig;
+     Vector3 dir;
 
     Quaternion oikeaSuunta;
 
@@ -93,7 +99,30 @@ public class Kiipeäminen : MonoBehaviour
 
     // Update is called once per frame
 
+        public void Nollaa()
+    {
+        roiku = false;
+        liiku = false;
+        kesken = false;
+        valmis = true;
+        kiipeys = false;
+        kiipeilyVasemmalle = false;
+        kiipeilyOikealle = false;
+        roikuKielekkeellä = false;
+        roikkuminenHypystä = false;
+        eiVoiKiivetäVasemmalle = false;
+        eiVoiKiivetäOikealle = false;
+        roikkumispaikka = Vector3.zero;
+        roikkumispaikkaY = 0f;
 
+        cc.lockMovement = false;
+        cc.keepDirection = false;
+        cc.isStrafing = false;
+        cc.locomotionType = vThirdPersonMotor.LocomotionType.FreeWithStrafe;
+        gameObject.GetComponent<Rigidbody>().isKinematic = false;
+        gameObject.GetComponent<Collider>().isTrigger = false;
+        tipuRoikkumisesta = false;
+    }
     void Update()
     {
         //Kiipeemisen aloittaminen jos on ilmassa
@@ -103,7 +132,9 @@ public class Kiipeäminen : MonoBehaviour
             RaycastHit hyppyRayAlempiHit;
 
             //Jos edessä on seinä, joka ei ole kasvi tai vihollinen
-            if (Physics.Raycast(hyppyRayAlempi, maxDistance: 0.5f, hitInfo: out hyppyRayAlempiHit) && hyppyRayAlempiHit.collider.tag != "Kasvis" && hyppyRayAlempiHit.collider.tag != "Enemy"&& hyppyRayAlempiHit.collider.tag != "Miekka")
+            if (Physics.Raycast(hyppyRayAlempi, maxDistance: 0.5f, hitInfo: out hyppyRayAlempiHit) &&
+                hyppyRayAlempiHit.collider.tag != "Kasvis" && hyppyRayAlempiHit.collider.tag != "Enemy"&& hyppyRayAlempiHit.collider.tag != "Miekka" &&
+                hyppyRayAlempiHit.collider.tag != "Lava" && hyppyRayAlempiHit.collider.tag != "Moukari")
             {
                 //Jos seinän päällä on tasanne
                 Ray hyppyRayYlempi = new Ray(RayRoikkumisTasoKorkeusOrigin.position, transform.forward);
@@ -113,114 +144,121 @@ public class Kiipeäminen : MonoBehaviour
                     RaycastHit hyppyRayYlempiAlasHit;
 
                     //Tsekataan, että tasanteella on lattia ja otetaan sen koordinaatit talteen
-                    if (Physics.Raycast(hyppyRayYlempiAlas, maxDistance: 0.2f, hitInfo: out hyppyRayYlempiAlasHit) && hyppyRayYlempiAlasHit.collider.tag != "Kasvis" && hyppyRayYlempiAlasHit.collider.tag != "Enemy" && hyppyRayYlempiAlasHit.collider.tag != "Miekka")
+                    if (Physics.Raycast(hyppyRayYlempiAlas, maxDistance: 0.2f, hitInfo: out hyppyRayYlempiAlasHit) &&
+                        hyppyRayYlempiAlasHit.collider.tag != "Kasvis" && hyppyRayYlempiAlasHit.collider.tag != "Enemy" && hyppyRayYlempiAlasHit.collider.tag != "Miekka"&&
+                        hyppyRayAlempiHit.collider.tag != "Lava" && hyppyRayAlempiHit.collider.tag != "Moukari")
                     {
-                        Vector3 capsulenPaikkaKeski;
-                        Vector3 point1Keski;
-                        Vector3 point2Keski;
-
-                        Quaternion osumanSuunta = Quaternion.FromToRotation(transform.forward, new Vector3(-hyppyRayAlempiHit.normal.x, 0f, -hyppyRayAlempiHit.normal.z)) * transform.rotation;
-                        capsulenPaikkaKeski = new Vector3(hyppyRayAlempiHit.point.x, col.transform.position.y, hyppyRayAlempiHit.point.z) - (-hyppyRayAlempiHit.normal * 0.4f);
-
-
-                        float capsulenMatkaKeskeltäPointteihin = col.height / 2 - col.radius;
-                        point1Keski = capsulenPaikkaKeski + col.center + Vector3.up * capsulenMatkaKeskeltäPointteihin;
-                        point2Keski = capsulenPaikkaKeski + col.center - Vector3.up * capsulenMatkaKeskeltäPointteihin;
-                        float radius = col.radius * 0.1f;
-
-                        UnityEngine.Debug.DrawRay(point1Keski, osumanSuunta * (-Vector3.right.normalized * 0.37f), color: Color.black, 22);
-                        UnityEngine.Debug.DrawRay(point1Keski, osumanSuunta * (Vector3.right.normalized * 0.37f), color: Color.blue, 22);
-                        RaycastHit hitInfoVasen;
-                        RaycastHit hitInfoOikea;
-
-                        //Varmistetaan, että tuleva paikka ei laita pelaajaa seinän sisään vasemmalla eli että pelaaja mahtuu tulevaan paikkaan
-                        if (Physics.CapsuleCast(point1Keski, point2Keski, radius, osumanSuunta * (-Vector3.right), maxDistance: 0.37f, layerMask: 1, hitInfo: out hitInfoVasen, queryTriggerInteraction: QueryTriggerInteraction.Ignore))
+                        //Tsekataan, että lattian pinta ei ole liian kalteva
+                        if (hyppyRayYlempiAlasHit.normal.y>=0.9f)
                         {
-                            eiVoiKiivetäVasemmalle = true;
-                        }
-                        //Varmistetaan, että tuleva paikka ei laita pelaajaa seinän sisään oikealla eli että pelaaja mahtuu tulevaan paikkaan
-                        if (Physics.CapsuleCast(point1Keski, point2Keski, radius, osumanSuunta * (Vector3.right), maxDistance: 0.37f, layerMask: 1, hitInfo: out hitInfoOikea, queryTriggerInteraction: QueryTriggerInteraction.Ignore))
-                        {
-                            eiVoiKiivetäOikealle = true;
-                        }
-                        //Jos pelaaja mahtuu tulevaan paikkaan
-                        if (eiVoiKiivetäVasemmalle == false && eiVoiKiivetäOikealle == false)
-                        {
-                            rb.velocity = Vector3.zero;
-                            cc.lockMovement = true;
-                            cc.keepDirection = true;
-                            cc.locomotionType = vThirdPersonMotor.LocomotionType.OnlyStrafe;
-                            rb.isKinematic = true;
-                            cc.isSprinting = false;
-                            gameObject.GetComponent<Collider>().isTrigger = true;
+                            Vector3 capsulenPaikkaKeski;
+                            Vector3 point1Keski;
+                            Vector3 point2Keski;
 
-                            kesken = true;
-                            valmis = false;
-                            tulevaPaikka2 = hyppyRayYlempiAlasHit.point;
-                            kiipeys = false;
-                            roikkumispaikkaY = hyppyRayYlempiAlasHit.point.y;
-                            roiku = true;
-                            roikkuminenHypystä = true;
-                            KielekkeenPaikkaHypystä = hyppyRayAlempiHit.point;
+                            Quaternion osumanSuunta = Quaternion.FromToRotation(transform.forward, new Vector3(-hyppyRayAlempiHit.normal.x, 0f, -hyppyRayAlempiHit.normal.z)) * transform.rotation;
+                            capsulenPaikkaKeski = new Vector3(hyppyRayAlempiHit.point.x, col.transform.position.y, hyppyRayAlempiHit.point.z) - (-hyppyRayAlempiHit.normal * 0.4f);
 
-                            transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-hyppyRayAlempiHit.normal.x, 0f, -hyppyRayAlempiHit.normal.z)) * transform.rotation;
-                            oikeaSuunta = transform.rotation;
-                        }
 
-                        //Jos pelaaja joutuisi liian lähelle seinää oikealla
-                        if (eiVoiKiivetäVasemmalle == false && eiVoiKiivetäOikealle == true)
-                        {
-                            rb.velocity = Vector3.zero;
-                            cc.lockMovement = true;
-                            cc.keepDirection = true;
-                            cc.locomotionType = vThirdPersonMotor.LocomotionType.OnlyStrafe;
-                            rb.isKinematic = true;
-                            cc.isSprinting = false;
-                            gameObject.GetComponent<Collider>().isTrigger = true;
+                            float capsulenMatkaKeskeltäPointteihin = col.height / 2 - col.radius;
+                            point1Keski = capsulenPaikkaKeski + col.center + Vector3.up * capsulenMatkaKeskeltäPointteihin;
+                            point2Keski = capsulenPaikkaKeski + col.center - Vector3.up * capsulenMatkaKeskeltäPointteihin;
+                            float radius = col.radius * 0.1f;
 
-                            kesken = true;
-                            valmis = false;
-                            tulevaPaikka2 = hyppyRayYlempiAlasHit.point;
-                            kiipeys = false;
-                            roikkumispaikkaY = hyppyRayYlempiAlasHit.point.y;
-                            roiku = true;
-                            roikkuminenHypystä = true;
-                            KielekkeenPaikkaHypystä = hyppyRayAlempiHit.point + (osumanSuunta * (-Vector3.right * 0.07f));
+                            UnityEngine.Debug.DrawRay(point1Keski, osumanSuunta * (-Vector3.right.normalized * 0.37f), color: Color.black, 22);
+                            UnityEngine.Debug.DrawRay(point1Keski, osumanSuunta * (Vector3.right.normalized * 0.37f), color: Color.blue, 22);
+                            RaycastHit hitInfoVasen;
+                            RaycastHit hitInfoOikea;
 
-                            transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-hyppyRayAlempiHit.normal.x, 0f, -hyppyRayAlempiHit.normal.z)) * transform.rotation;
-                            oikeaSuunta = transform.rotation;
-                        }
+                            //Varmistetaan, että tuleva paikka ei laita pelaajaa seinän sisään vasemmalla eli että pelaaja mahtuu tulevaan paikkaan
+                            if (Physics.CapsuleCast(point1Keski, point2Keski, radius, osumanSuunta * (-Vector3.right), maxDistance: 0.37f, layerMask: 1, hitInfo: out hitInfoVasen, queryTriggerInteraction: QueryTriggerInteraction.Ignore))
+                            {
+                                eiVoiKiivetäVasemmalle = true;
+                            }
+                            //Varmistetaan, että tuleva paikka ei laita pelaajaa seinän sisään oikealla eli että pelaaja mahtuu tulevaan paikkaan
+                            if (Physics.CapsuleCast(point1Keski, point2Keski, radius, osumanSuunta * (Vector3.right), maxDistance: 0.37f, layerMask: 1, hitInfo: out hitInfoOikea, queryTriggerInteraction: QueryTriggerInteraction.Ignore))
+                            {
+                                eiVoiKiivetäOikealle = true;
+                            }
+                            //Jos pelaaja mahtuu tulevaan paikkaan
+                            if (eiVoiKiivetäVasemmalle == false && eiVoiKiivetäOikealle == false)
+                            {
+                                rb.velocity = Vector3.zero;
+                                cc.lockMovement = true;
+                                cc.keepDirection = true;
+                                cc.locomotionType = vThirdPersonMotor.LocomotionType.OnlyStrafe;
+                                rb.isKinematic = true;
+                                cc.isSprinting = false;
+                                gameObject.GetComponent<Collider>().isTrigger = true;
 
-                        //Jos pelaaja joutuisi liian lähelle seinää vasemmalla
-                        if (eiVoiKiivetäVasemmalle == true && eiVoiKiivetäOikealle == false)
-                        {
-                            rb.velocity = Vector3.zero;
-                            cc.lockMovement = true;
-                            cc.keepDirection = true;
-                            cc.locomotionType = vThirdPersonMotor.LocomotionType.OnlyStrafe;
-                            rb.isKinematic = true;
-                            cc.isSprinting = false;
-                            gameObject.GetComponent<Collider>().isTrigger = true;
+                                kesken = true;
+                                valmis = false;
+                                tulevaPaikka2 = hyppyRayYlempiAlasHit.point;
+                                kiipeys = false;
+                                roikkumispaikkaY = hyppyRayYlempiAlasHit.point.y;
+                                roiku = true;
+                                roikkuminenHypystä = true;
+                                KielekkeenPaikkaHypystä = hyppyRayAlempiHit.point;
 
-                            kesken = true;
-                            valmis = false;
-                            tulevaPaikka2 = hyppyRayYlempiAlasHit.point;
-                            kiipeys = false;
-                            roikkumispaikkaY = hyppyRayYlempiAlasHit.point.y;
-                            roiku = true;
-                            roikkuminenHypystä = true;
-                            KielekkeenPaikkaHypystä = hyppyRayAlempiHit.point + (osumanSuunta * (Vector3.right * 0.07f));
+                                transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-hyppyRayAlempiHit.normal.x, 0f, -hyppyRayAlempiHit.normal.z)) * transform.rotation;
+                                oikeaSuunta = transform.rotation;
+                            }
 
-                            transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-hyppyRayAlempiHit.normal.x, 0f, -hyppyRayAlempiHit.normal.z)) * transform.rotation;
-                            oikeaSuunta = transform.rotation;
+                            //Jos pelaaja joutuisi liian lähelle seinää oikealla
+                            if (eiVoiKiivetäVasemmalle == false && eiVoiKiivetäOikealle == true)
+                            {
+                                rb.velocity = Vector3.zero;
+                                cc.lockMovement = true;
+                                cc.keepDirection = true;
+                                cc.locomotionType = vThirdPersonMotor.LocomotionType.OnlyStrafe;
+                                rb.isKinematic = true;
+                                cc.isSprinting = false;
+                                gameObject.GetComponent<Collider>().isTrigger = true;
+
+                                kesken = true;
+                                valmis = false;
+                                tulevaPaikka2 = hyppyRayYlempiAlasHit.point;
+                                kiipeys = false;
+                                roikkumispaikkaY = hyppyRayYlempiAlasHit.point.y;
+                                roiku = true;
+                                roikkuminenHypystä = true;
+                                KielekkeenPaikkaHypystä = hyppyRayAlempiHit.point + (osumanSuunta * (-Vector3.right * 0.07f));
+
+                                transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-hyppyRayAlempiHit.normal.x, 0f, -hyppyRayAlempiHit.normal.z)) * transform.rotation;
+                                oikeaSuunta = transform.rotation;
+                            }
+
+                            //Jos pelaaja joutuisi liian lähelle seinää vasemmalla
+                            if (eiVoiKiivetäVasemmalle == true && eiVoiKiivetäOikealle == false)
+                            {
+                                rb.velocity = Vector3.zero;
+                                cc.lockMovement = true;
+                                cc.keepDirection = true;
+                                cc.locomotionType = vThirdPersonMotor.LocomotionType.OnlyStrafe;
+                                rb.isKinematic = true;
+                                cc.isSprinting = false;
+                                gameObject.GetComponent<Collider>().isTrigger = true;
+
+                                kesken = true;
+                                valmis = false;
+                                tulevaPaikka2 = hyppyRayYlempiAlasHit.point;
+                                kiipeys = false;
+                                roikkumispaikkaY = hyppyRayYlempiAlasHit.point.y;
+                                roiku = true;
+                                roikkuminenHypystä = true;
+                                KielekkeenPaikkaHypystä = hyppyRayAlempiHit.point + (osumanSuunta * (Vector3.right * 0.07f));
+
+                                transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-hyppyRayAlempiHit.normal.x, 0f, -hyppyRayAlempiHit.normal.z)) * transform.rotation;
+                                oikeaSuunta = transform.rotation;
+                            }
+
+                            //Jos pelaaja ei mahdu roikkumaan tulevaan paikkaan 
+                            else
+                            {
+                                eiVoiKiivetäVasemmalle = false;
+                                eiVoiKiivetäOikealle = false;
+                            }
                         }
                         
-                        //Jos pelaaja ei mahdu roikkumaan tulevaan paikkaan 
-                        else
-                        {
-                            eiVoiKiivetäVasemmalle = false;
-                            eiVoiKiivetäOikealle = false;
-                        }
                     }
                 }
             }
@@ -267,7 +305,8 @@ public class Kiipeäminen : MonoBehaviour
             if (Physics.Raycast(ray0, out kiipeemisenAlotusHit, maxDistance: 0.5f))
             {
                 //Estetään kiipely kasvien ja vihollisten päälle
-                if (kiipeemisenAlotusHit.collider.tag != "Kasvis" && kiipeemisenAlotusHit.collider.tag != "Enemy" && kiipeemisenAlotusHit.collider.tag != "Miekka")
+                if (kiipeemisenAlotusHit.collider.tag != "Kasvis" && kiipeemisenAlotusHit.collider.tag != "Enemy" && kiipeemisenAlotusHit.collider.tag != "Miekka" &&
+                        kiipeemisenAlotusHit.collider.tag != "Lava" && kiipeemisenAlotusHit.collider.tag != "Moukari")
                 {
                     var tulevaSuunta = Quaternion.FromToRotation(transform.forward, new Vector3(-kiipeemisenAlotusHit.normal.x, 0f, -kiipeemisenAlotusHit.normal.z)) * transform.rotation;
                     //var tt = tulevaSuunta * Vector3.forward;
@@ -317,6 +356,87 @@ public class Kiipeäminen : MonoBehaviour
             }
         }
 
+        //Roikkumiseen tiputtautuminen
+        else if (Input.GetKeyDown("r") && liiku == false && roiku == false && eka == false && cc.isGrounded == true)
+        {
+            //Tsekataan, että edessä on tyhjää alhaalla
+            Ray ray0Alas= new Ray(Ray0Origin.position+(transform.forward*0.55f), -transform.up);
+            RaycastHit tt;
+            if (!Physics.Raycast(ray0Alas , maxDistance: 1f, hitInfo: out tt))
+            {
+                //Tsekataan, että ray osuu sen lattian sivuun missä seistään
+                Ray roikkumispaikanCheckRay = new Ray(ray0Alas.origin - (transform.up * 0.15f), -transform.forward);
+                if (Physics.Raycast(roikkumispaikanCheckRay, maxDistance: 0.55f, hitInfo: out taakseRayHit))
+                {
+                    //Estetään roikkuminen kasvien ja vihollisten päällä
+                    if (taakseRayHit.collider.tag != "Kasvis" && taakseRayHit.collider.tag != "Enemy" && taakseRayHit.collider.tag != "Miekka" &&
+                        taakseRayHit.collider.tag != "Lava" && taakseRayHit.collider.tag != "Moukari")
+                    {
+                        var tulevaSuunta = Quaternion.FromToRotation(transform.forward, new Vector3(-taakseRayHit.normal.x, 0f, -taakseRayHit.normal.z)) * transform.rotation;
+                        var tulevaSuuntaToisinpäin = tulevaSuunta * -Vector3.forward;
+                        var tulevaSuuntaToisinpäinNormaali = tulevaSuuntaToisinpäin.normalized;
+                        var tulevaSuuntaToisinpäinNormaaliString = tulevaSuuntaToisinpäinNormaali.ToString();
+
+                        var hitinsuunta = taakseRayHit.normal.normalized;
+                        var hitinsuuntaString = hitinsuunta.ToString();
+
+                        hitinsuunta.Normalize();
+                        tulevaSuuntaToisinpäin.Normalize();
+
+                        //UnityEngine.Debug.DrawRay()
+
+                        //Tsekataan että seinä jota pitkin aiotaan kiivetä on suora y suunnassa, ettei esim kiivetä kaltevalla lattialla 
+                        if (hitinsuunta.y <=0.15f)
+                        {
+                            
+                            Vector3 point1Keski;
+                            Vector3 point2Keski;
+                            
+
+                            float capsulenMatkaKeskeltäPointteihin = col.height / 2 - col.radius;
+                            point1Keski = transform.position + col.center + Vector3.up * capsulenMatkaKeskeltäPointteihin;
+                            point2Keski = transform.position + col.center - Vector3.up * capsulenMatkaKeskeltäPointteihin;
+                            float radius = col.radius *0.95f;
+                            var maxDistanssi = Vector3.Distance(new Vector3(taakseRayHit.point.x, 0f, taakseRayHit.point.z), new Vector3(transform.position.x, 0f, transform.position.z)) + 0.55f;
+
+                            //CapsuleCast eteenpäin
+                            if (!Physics.CapsuleCast(point1Keski, point2Keski, radius, transform.forward, maxDistance: maxDistanssi, layerMask: 1, queryTriggerInteraction: QueryTriggerInteraction.Ignore))
+                            {
+                                point1Keski = (transform.position + (transform.forward * maxDistanssi)) + col.center + Vector3.up * capsulenMatkaKeskeltäPointteihin;
+                                point2Keski = (transform.position + (transform.forward * maxDistanssi)) + col.center - Vector3.up * capsulenMatkaKeskeltäPointteihin;
+
+                                //CapsuleCast alaspäin
+                                if (!Physics.CapsuleCast(point1Keski, point2Keski, radius, -transform.up, maxDistance: 1f, layerMask: 1, queryTriggerInteraction: QueryTriggerInteraction.Ignore))
+                                {
+                                    var positio = transform.position;
+                                    rb.velocity = Vector3.zero;
+                                    cc.lockMovement = true;
+                                    cc.keepDirection = true;
+                                    cc.locomotionType = vThirdPersonMotor.LocomotionType.OnlyStrafe;
+                                    rb.isKinematic = true;
+                                    cc.isSprinting = false;
+                                    gameObject.GetComponent<Collider>().isTrigger = true;
+
+                                    kesken = true;
+                                    valmis = false;
+                                    tulevaPaikka2 = positio;
+                                    kiipeys = false;
+                                    roikkumispaikkaY = positio.y;
+                                    roiku = true;
+                                    tiputtautuminen = true;
+                                    seinänPaikkaTiputtautumisesta = taakseRayHit.point;
+
+                                    transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-taakseRayHit.normal.x, 0f, -taakseRayHit.normal.z)) * transform.rotation;
+                                    oikeaSuunta = transform.rotation;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
         //kiipeysRoikkumisesta ja kiipeys ilman roikkumista matalan esteen yli
         else if (liiku && kiipeys || liiku && Input.GetKeyDown("e") && roiku)
         {
@@ -339,7 +459,7 @@ public class Kiipeäminen : MonoBehaviour
             //Tsekataan, että roikkumistasanne ei muutu seinäksi 0.1 yksikköä roikkumis seinästä pelaajan katsomissuuntaan (eli kun pelaaja on 0.5 yksikköä seinästä ja ray menee 0.6 yksikköä eteenpäin)
             if (Physics.Raycast(rayRoikkumistasoVasemmalle, maxDistance: 0.6f) == false)
             {
-                roiku = false;
+                
                 kiipeilyVasemmalle = true;
             }
         }
@@ -353,7 +473,7 @@ public class Kiipeäminen : MonoBehaviour
             //Tsekataan, että roikkumistasanne ei muutu seinäksi 0.1 yksikköä roikkumis seinästä pelaajan katsomissuuntaan (eli kun pelaaja on 0.5 yksikköä seinästä ja ray menee 0.6 yksikköä eteenpäin)
             if (Physics.Raycast(rayRoikkumistasoOikealle, maxDistance: 0.6f) == false)
             {
-                roiku = false;
+               
                 kiipeilyOikealle = true;
             }
         }
@@ -369,39 +489,31 @@ public class Kiipeäminen : MonoBehaviour
         //roikkumisposition korjaus
         if (roiku && transform.rotation.normalized == oikeaSuunta.normalized)
         {
-            roikkumispaikka.y = roikkumispaikkaY - 1f;
+            //roikkumispaikka.y = roikkumispaikkaY - 1f;
 
-
-            if (transform.position == roikkumispaikka)
+            //Tällä pidetään pelaaja oikeassa kohdassa roikkumassa
+            if (transform.position == korjattuRoikkumisPaikka)
             {
                 liiku = true;
-
-                Ray rayNormal = new Ray(RayNormalOrigin.position, transform.forward);
-                UnityEngine.Debug.DrawRay(rayNormal.origin, rayNormal.direction, color: Color.grey, 3);
-                //Pidetään etäisyys seinästä 0.5 yksikköä
-                if (Physics.Raycast(rayNormal, maxDistance: 1, hitInfo: out RaycastHitNormal))
+                Ray rayKorkeusCheck = new Ray((RayRoikkumisTasoKorkeusOrigin.position+(transform.forward.normalized*0.6f)), -transform.up);
+                RaycastHit rayKorkeusCheckHit;
+                UnityEngine.Debug.DrawRay(rayKorkeusCheck.origin, rayKorkeusCheck.direction.normalized * 0.2f, color: Color.magenta, 8);
+                if (Physics.Raycast(rayKorkeusCheck, maxDistance: 0.2f, hitInfo: out rayKorkeusCheckHit))
                 {
-                    korjattuRoikkumisPaikka = RaycastHitNormal.point - (transform.forward / 2);
-                    korjattuRoikkumisPaikka.y = roikkumispaikka.y;
-                    transform.position = korjattuRoikkumisPaikka;
-                    roikkumispaikka = korjattuRoikkumisPaikka;
+                    
+                    roikkumispaikka.y = rayKorkeusCheckHit.point.y - 1f;
+
+                    Ray rayNormal = new Ray(RayNormalOrigin.position, transform.forward);
+                    UnityEngine.Debug.DrawRay(rayNormal.origin, rayNormal.direction, color: Color.grey, 3);
+                    //Pidetään etäisyys seinästä 0.5 yksikköä
+                    if (Physics.Raycast(rayNormal, maxDistance: 1, hitInfo: out RaycastHitNormal))
+                    {
+                        korjattuRoikkumisPaikka = RaycastHitNormal.point - (transform.forward *0.5f);
+                        korjattuRoikkumisPaikka.y = roikkumispaikka.y;
+                        transform.position = korjattuRoikkumisPaikka;
+                        roikkumispaikka = korjattuRoikkumisPaikka;
+                    }
                 }
-                //else if (kiipeilyVasemmalle && Physics.Raycast(RayNormal.position + (transform.right * 0.1f), transform.forward, maxDistance: 1, hitInfo: out RaycastHitNormal))
-                //{
-                //    korjattuRoikkumisPaikka = RaycastHitNormal.point - (transform.forward / 2);
-                //    korjattuRoikkumisPaikka.y = roikkumispaikka.y;
-
-                //    transform.position = korjattuRoikkumisPaikka;
-                //    roikkumispaikka = korjattuRoikkumisPaikka;
-                //}
-                //else if (kiipeilyOikealle && Physics.Raycast(RayNormal.position + (-transform.right * 0.1f), transform.forward, maxDistance: 1, hitInfo: out RaycastHitNormal))
-                //{
-                //    korjattuRoikkumisPaikka = RaycastHitNormal.point - (transform.forward / 2);
-                //    korjattuRoikkumisPaikka.y = roikkumispaikka.y;
-
-                //    transform.position = korjattuRoikkumisPaikka;
-                //    roikkumispaikka = korjattuRoikkumisPaikka;
-                //}
             }
 
             //Nämä tapahtuu eka, kun synkronisoidaan roikkumispaikat
@@ -409,39 +521,49 @@ public class Kiipeäminen : MonoBehaviour
             {
                 liiku = true;
 
-                Ray rayNormal = new Ray(new Vector3(RayNormalOrigin.position.x, roikkumispaikka.y, RayNormalOrigin.position.z) - (transform.forward * 0.5f), transform.forward);
+                Ray rayNormal = new Ray(new Vector3(RayNormalOrigin.position.x, roikkumispaikkaY, RayNormalOrigin.position.z) - (transform.forward * 0.5f), transform.forward);
                 UnityEngine.Debug.DrawRay(rayNormal.origin, rayNormal.direction, color: Color.yellow, 55);
 
                 //Hyppyroikkumis position korjaus
                 if (roikkuminenHypystä == true)
                 {
-                    korjattuRoikkumisPaikka = KielekkeenPaikkaHypystä - (transform.forward / 2);
-                    korjattuRoikkumisPaikka.y = roikkumispaikka.y;
+                    korjattuRoikkumisPaikka = KielekkeenPaikkaHypystä - (transform.forward * 0.5f);
+                    korjattuRoikkumisPaikka.y = roikkumispaikkaY - 1f;
 
                     transform.position = korjattuRoikkumisPaikka;
                     roikkumispaikka = korjattuRoikkumisPaikka;
                     roikkuminenHypystä = false;
                 }
                 //Suoran seinän roikkumis position korjaus
-                else if (Physics.Raycast(rayNormal, maxDistance: 1, hitInfo: out RaycastHitNormal))
-                {
 
-                    korjattuRoikkumisPaikka = RaycastHitNormal.point - (transform.forward / 2);
-                    korjattuRoikkumisPaikka.y = roikkumispaikka.y;
-
-                    transform.position = korjattuRoikkumisPaikka;
-                    roikkumispaikka = korjattuRoikkumisPaikka;
-
-                }
                 //Kieleke roikkumisen position korjaus
                 else if (roikuKielekkeellä == true)
                 {
-                    korjattuRoikkumisPaikka = kielekkeenPaikka - (transform.forward / 2);
-                    korjattuRoikkumisPaikka.y = roikkumispaikka.y;
+                    korjattuRoikkumisPaikka = kielekkeenPaikka - (transform.forward * 0.5f);
+                    korjattuRoikkumisPaikka.y = roikkumispaikkaY - 1f;
 
                     transform.position = korjattuRoikkumisPaikka;
                     roikkumispaikka = korjattuRoikkumisPaikka;
                     roikuKielekkeellä = false;
+                }
+                else if (tiputtautuminen)
+                {
+                    korjattuRoikkumisPaikka = seinänPaikkaTiputtautumisesta - (transform.forward * 0.5f);
+                    korjattuRoikkumisPaikka.y = roikkumispaikkaY - 1f;
+
+                    transform.position = korjattuRoikkumisPaikka;
+                    roikkumispaikka = korjattuRoikkumisPaikka;
+                    tiputtautuminen = false;
+                }
+                else if (Physics.Raycast(rayNormal, maxDistance: 1, hitInfo: out RaycastHitNormal))
+                {
+
+                    korjattuRoikkumisPaikka = RaycastHitNormal.point - (transform.forward * 0.5f);
+                    korjattuRoikkumisPaikka.y = roikkumispaikkaY - 1f;
+
+                    transform.position = korjattuRoikkumisPaikka;
+                    roikkumispaikka = korjattuRoikkumisPaikka;
+
                 }
             }
         }
@@ -546,7 +668,6 @@ public class Kiipeäminen : MonoBehaviour
         //tipuRoikkumisesta toteutus
         if (tipuRoikkumisesta)
         {
-            roiku = false;
             liiku = false;
             kesken = false;
             valmis = true;
@@ -581,6 +702,8 @@ public class Kiipeäminen : MonoBehaviour
             {
 
                 Ray rayNormal1 = new Ray(RayNormalOrigin.position + (-transform.right * 0.1f), transform.forward);
+                Ray rayKorkeusCheck = new Ray(RayRoikkumisTasoKorkeusOrigin.position + (transform.forward.normalized * 0.6f) + (-transform.right * 0.1f), -transform.up);
+                RaycastHit rayKorkeusCheckHit;
                 Ray rayVasemmalle = new Ray(RayNormalOrigin.position, -transform.right);
 
                 //UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction, color: Color.red);
@@ -599,7 +722,7 @@ public class Kiipeäminen : MonoBehaviour
                 float castDistance = 0.1f;
 
                 //Tsekataan onko vasemmalla seinä, jos on niin käännytään sitä kohti ja jos osuu niin että roikkumistasanne ei muutu seinäksi
-                if (Physics.Raycast(rayVasemmalle, maxDistance: 0.7f, hitInfo: out RaycastHitNormal1) && Physics.Raycast(rayRoikkumistasoVasemmalle, maxDistance: 0.75f) == false)
+                if (Physics.Raycast(rayVasemmalle, maxDistance: 0.55f, hitInfo: out RaycastHitNormal1) && Physics.Raycast(rayRoikkumistasoVasemmalle, maxDistance: 0.75f) == false)
                 {
                     transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-RaycastHitNormal1.normal.x, 0f, -RaycastHitNormal1.normal.z)) * transform.rotation;
                 }
@@ -609,7 +732,7 @@ public class Kiipeäminen : MonoBehaviour
                 {
 
                     //Tsekataan onko seinää vasemmalle+0.1 yksikköä
-                    if (Physics.Raycast(rayNormal1, maxDistance: 0.7f, hitInfo: out RaycastHitNormal1))
+                    if (Physics.Raycast(rayNormal1, maxDistance: 0.7f, hitInfo: out RaycastHitNormal1) && Physics.Raycast(rayKorkeusCheck, hitInfo: out rayKorkeusCheckHit) && rayKorkeusCheckHit.normal.y > 0.9f)
                     {
 
                         //Tsekataan onko seinä johon osui raycast saman suuntaisesti kuin pelaaja
@@ -682,14 +805,12 @@ public class Kiipeäminen : MonoBehaviour
                 }
                 kiipeilyVasemmalle = false;
                 eiVoiKiivetäOikealle = false;
-                roiku = true;
                 oikeaSuunta = transform.rotation;
             }
             //Jos pelaajan roikkumispositio ei ole sama kuin korjatturoikkumispositio tai pelaajan suunta ei ole seinän suuntaisesti
             else
             {
                 kiipeilyVasemmalle = false;
-                roiku = true;
             }
         }
         //kiipeilyOikealle toteutus
@@ -698,16 +819,20 @@ public class Kiipeäminen : MonoBehaviour
             Vector3 capsulenLähtöpaikka;
             Vector3 point1;
             Vector3 point2;
+
             if (transform.position == korjattuRoikkumisPaikka && transform.rotation == oikeaSuunta)
             {
                 Ray rayNormal1 = new Ray(RayNormalOrigin.position + (transform.right * 0.1f), transform.forward);
+                Ray rayKorkeusCheck = new Ray(RayRoikkumisTasoKorkeusOrigin.position + (transform.forward.normalized * 0.6f) + (transform.right * 0.1f), -transform.up);
+                RaycastHit rayKorkeusCheckHit;
                 Ray rayOikealle = new Ray(RayNormalOrigin.position, transform.right);
-                //UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction, color: Color.red);
-                UnityEngine.Debug.DrawRay(rayOikealle.origin, rayOikealle.direction.normalized * 0.7f, color: Color.yellow, 25f);
-                UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction.normalized * 0.6f, color: Color.black, 25f);
-
                 Ray rayRoikkumistasoOikealle = new Ray(RayRoikkumisTasoKorkeusOrigin.position, transform.right);
-                UnityEngine.Debug.DrawRay(rayRoikkumistasoOikealle.origin, (rayRoikkumistasoOikealle.direction.normalized * 0.75f), color: Color.magenta, 33);
+                //UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction, color: Color.red);
+                //UnityEngine.Debug.DrawRay(rayOikealle.origin, rayOikealle.direction.normalized * 0.7f, color: Color.yellow, 25f);
+                //UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction.normalized * 0.6f, color: Color.black, 25f);
+                //UnityEngine.Debug.DrawRay(rayRoikkumistasoOikealle.origin, (rayRoikkumistasoOikealle.direction.normalized * 0.75f), color: Color.magenta, 33);
+                UnityEngine.Debug.DrawRay(rayKorkeusCheck.origin, rayKorkeusCheck.direction.normalized * 0.2f, color: Color.yellow, 25f);
+
 
                 capsulenLähtöpaikka = col.transform.position;
                 float raycapsulenMatkaKeskeltäPointteihin = col.height / 2 - col.radius;
@@ -718,7 +843,7 @@ public class Kiipeäminen : MonoBehaviour
                 float castDistance = 0.1f;
 
                 //Tsekataan onko oikealla seinä, jos on niin käännytään sitä kohti ja jos osuu niin että roikkumistasanne ei muutu seinäksi
-                if (Physics.Raycast(rayOikealle, maxDistance: 0.7f, hitInfo: out RaycastHitNormal1) && Physics.Raycast(rayRoikkumistasoOikealle, maxDistance: 0.75f) == false)
+                if (Physics.Raycast(rayOikealle, maxDistance: 0.55f, hitInfo: out RaycastHitNormal1) && Physics.Raycast(rayRoikkumistasoOikealle, maxDistance: 0.75f) == false)
                 {
                     transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-RaycastHitNormal1.normal.x, 0f, -RaycastHitNormal1.normal.z)) * transform.rotation;
                 }
@@ -727,7 +852,7 @@ public class Kiipeäminen : MonoBehaviour
                 else if (!Physics.CapsuleCast(point1, point2, radius, transform.right, castDistance))
                 {
                     //Tsekataan onko seinää oikealle +0.1 yksikköä
-                    if (Physics.Raycast(rayNormal1, maxDistance: 0.7f, hitInfo: out RaycastHitNormal1))
+                    if (Physics.Raycast(rayNormal1, maxDistance: 0.7f, hitInfo: out RaycastHitNormal1)&& Physics.Raycast(rayKorkeusCheck, maxDistance: 0.2f, hitInfo: out rayKorkeusCheckHit)&&rayKorkeusCheckHit.normal.y>0.9f)
                     {
                         //Tsekataan onko seinä johon osui raycast saman suuntaisesti kuin pelaaja
                         if (-RaycastHitNormal1.normal == transform.forward)
@@ -802,7 +927,6 @@ public class Kiipeäminen : MonoBehaviour
                 }
                 kiipeilyOikealle = false;
                 eiVoiKiivetäVasemmalle = false;
-                roiku = true;
                 oikeaSuunta = transform.rotation;
             }
 
@@ -810,35 +934,13 @@ public class Kiipeäminen : MonoBehaviour
             else
             {
                 kiipeilyOikealle = false;
-                roiku = true;
             }
         }
-        //if (cc.isGrounded)
-        //{
-        //    roiku = false;
-        //    liiku = false;
-        //    kesken = false;
-        //    valmis = true;
-        //    kiipeys = false;
-        //    kiipeilyVasemmalle = false;
-        //    kiipeilyOikealle = false;
-        //    roikuKielekkeellä = false;
-        //    roikkuminenHypystä = false;
-        //    eiVoiKiivetäVasemmalle = false;
-        //    eiVoiKiivetäOikealle = false;
-        //    roikkumispaikka = Vector3.zero;
-        //    roikkumispaikkaY = 0f;
-
-        //    cc.lockMovement = false;
-        //    cc.keepDirection = false;
-        //    cc.isStrafing = false;
-        //    cc.locomotionType = vThirdPersonMotor.LocomotionType.FreeWithStrafe;
-        //    gameObject.GetComponent<Rigidbody>().isKinematic = false;
-        //    gameObject.GetComponent<Collider>().isTrigger = false;
-        //    tipuRoikkumisesta = false;
-        //}
-
     }
+
+
+    //VaultingUusin() ja KiipeilyKielekkeelle() vois siistiä ja muuttaa vähän fiksummaks
+
 
     //Kiipeily suoraa seinää pitkin eli kiipeily seinää pitkin, joka on lattiasta ylöspäin
     //Kiipeily tapahtuu periaatteella: jos aiempi ray osuu ja nykyinen ray ei osu
@@ -892,13 +994,16 @@ public class Kiipeäminen : MonoBehaviour
         Ray ray5Alas = new Ray(ray5.origin + (ray5.direction * 0.55f), -Vector3.up);
         RaycastHit ray5AlasHit;
 
+        RaycastHit hitSuoralleSeinälleRay0;
+        RaycastHit hitSuoralleSeinälleRay1;
         RaycastHit hitSuoralleSeinälleRay2;
         RaycastHit hitSuoralleSeinälleRay3;
         RaycastHit hitSuoralleSeinälleRay4;
         RaycastHit hitSuoralleSeinälleRay5;
+        RaycastHit hitTasanteenKulmanCheck;
 
         //alimmainen ray
-        if (Physics.Raycast(ray0, 0.55f) == true)
+        if (Physics.Raycast(ray0, maxDistance: 0.55f, hitInfo: out hitSuoralleSeinälleRay0) == true)
         {
             ray0OsuiBool = true;
         }
@@ -906,7 +1011,7 @@ public class Kiipeäminen : MonoBehaviour
         if (ray0OsuiBool == true)
         {
             //toka ray. Tällä kiivetää suoraan ilman roikkumista
-            if (Physics.Raycast(ray1, 0.55f) == false)
+            if (Physics.Raycast(ray1, maxDistance: 0.55f, hitInfo: out hitSuoralleSeinälleRay1) == false)
             {
                 ray1OsuiBool = false;
 
@@ -929,19 +1034,25 @@ public class Kiipeäminen : MonoBehaviour
                     Vector3 tokanCapsulenPoint1 = tulevaPaikkaRay.origin + col.center + Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
                     Vector3 tokanCapsulenPoint2 = tulevaPaikkaRay.origin + col.center - Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
 
-                    if (!Physics.CapsuleCast(tokanCapsulenPoint1, tokanCapsulenPoint2, radius, -transform.up, tulevapaikkaRaycastHit.distance - 0.01f))
+                    if (Physics.Raycast(ray1.origin + (ray1.direction * hitSuoralleSeinälleRay0.distance) + (ray1.direction * 0.1f), Vector3.down, maxDistance: 1f, hitInfo: out hitTasanteenKulmanCheck))
                     {
-                        kesken = true;
-                        valmis = false;
-                        tulevaPaikka1 = ray1.origin + ray1.direction * 0.5f;
-                        tulevaPaikka2 = tulevapaikkaRaycastHit.point;
-                        kiipeys = true;
-                        liiku = true;
+                        if (hitTasanteenKulmanCheck.normal.y>=0.9f)
+                        {
+                            if (!Physics.CapsuleCast(tokanCapsulenPoint1, tokanCapsulenPoint2, radius, -transform.up, tulevapaikkaRaycastHit.distance - 0.01f))
+                            {
+                                kesken = true;
+                                valmis = false;
+                                tulevaPaikka1 = ray1.origin + ray1.direction * 0.5f;
+                                tulevaPaikka2 = tulevapaikkaRaycastHit.point;
+                                kiipeys = true;
+                                liiku = true;
 
-                    }
-                    else
-                    {
-                        ray1CapsuleCastOnnaa = false;
+                            }
+                            else
+                            {
+                                ray1CapsuleCastOnnaa = false;
+                            }
+                        }
                     }
                 }
             }
@@ -972,20 +1083,27 @@ public class Kiipeäminen : MonoBehaviour
                         Vector3 tokanCapsulenPoint1 = tulevaPaikkaRay.origin + col.center + Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
                         Vector3 tokanCapsulenPoint2 = tulevaPaikkaRay.origin + col.center - Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
 
-                        //omituisesti capsulecast törmää ennen kuin raycast joten piti laittaa tulevapaikkaRaycastHit.distance - 0.01->tulevapaikkaRaycastHit.distance - 0.4f
-                        if (!Physics.CapsuleCast(tokanCapsulenPoint1, tokanCapsulenPoint2, radius, Vector3.down, out tokanCapsulenHitti, tulevapaikkaRaycastHit.distance - 0.4f))
+                        if (Physics.Raycast(ray2.origin + (ray2.direction * hitSuoralleSeinälleRay1.distance) + (ray2.direction * 0.1f), Vector3.down, maxDistance: 1f, hitInfo: out hitTasanteenKulmanCheck))
                         {
-                            kesken = true;
-                            valmis = false;
-                            tulevaPaikka1 = ray2.origin + ray2.direction * 0.5f;
-                            tulevaPaikka2 = tulevapaikkaRaycastHit.point;
+                            if (hitTasanteenKulmanCheck.normal.y >= 0.9f)
+                            {
 
-                            kiipeys = true;
-                            liiku = true;
-                        }
-                        else
-                        {
-                            ray2CapsuleCastOnnaa = false;
+                                //omituisesti capsulecast törmää ennen kuin raycast joten piti laittaa tulevapaikkaRaycastHit.distance - 0.01->tulevapaikkaRaycastHit.distance - 0.4f
+                                if (!Physics.CapsuleCast(tokanCapsulenPoint1, tokanCapsulenPoint2, radius, Vector3.down, out tokanCapsulenHitti, tulevapaikkaRaycastHit.distance - 0.4f))
+                                {
+                                    kesken = true;
+                                    valmis = false;
+                                    tulevaPaikka1 = ray2.origin + ray2.direction * 0.5f;
+                                    tulevaPaikka2 = tulevapaikkaRaycastHit.point;
+
+                                    kiipeys = true;
+                                    liiku = true;
+                                }
+                                else
+                                {
+                                    ray2CapsuleCastOnnaa = false;
+                                }
+                            }
                         }
                     }
                 }
@@ -1002,12 +1120,17 @@ public class Kiipeäminen : MonoBehaviour
 
                     if (Physics.Raycast(tulevaPaikkaRay, maxDistance: Mathf.Infinity, hitInfo: out tulevapaikkaRaycastHit))
                     {
-                        kesken = true;
-                        valmis = false;
-                        tulevaPaikka2 = tulevapaikkaRaycastHit.point;
-                        kiipeys = false;
-                        roikkumispaikkaY = tulevapaikkaRaycastHit.point.y;
-                        roiku = true;
+                        if (tulevapaikkaRaycastHit.normal.y >= 0.9f)
+                        {
+
+
+                            kesken = true;
+                            valmis = false;
+                            tulevaPaikka2 = tulevapaikkaRaycastHit.point;
+                            kiipeys = false;
+                            roikkumispaikkaY = tulevapaikkaRaycastHit.point.y;
+                            roiku = true;
+                        }
                     }
                 }
             }
@@ -1025,12 +1148,15 @@ public class Kiipeäminen : MonoBehaviour
 
                     if (Physics.Raycast(tulevaPaikkaRay, maxDistance: Mathf.Infinity, hitInfo: out tulevapaikkaRaycastHit))
                     {
-                        kesken = true;
-                        valmis = false;
-                        tulevaPaikka2 = tulevapaikkaRaycastHit.point;
-                        kiipeys = false;
-                        roikkumispaikkaY = tulevapaikkaRaycastHit.point.y;
-                        roiku = true;
+                        if (tulevapaikkaRaycastHit.normal.y >= 0.9f)
+                        {
+                            kesken = true;
+                            valmis = false;
+                            tulevaPaikka2 = tulevapaikkaRaycastHit.point;
+                            kiipeys = false;
+                            roikkumispaikkaY = tulevapaikkaRaycastHit.point.y;
+                            roiku = true;
+                        }
 
                     }
                 }
@@ -1050,12 +1176,15 @@ public class Kiipeäminen : MonoBehaviour
 
                     if (Physics.Raycast(tulevaPaikkaRay, maxDistance: Mathf.Infinity, hitInfo: out tulevapaikkaRaycastHit))
                     {
-                        kesken = true;
-                        valmis = false;
-                        tulevaPaikka2 = tulevapaikkaRaycastHit.point;
-                        kiipeys = false;
-                        roikkumispaikkaY = tulevapaikkaRaycastHit.point.y;
-                        roiku = true;
+                        if (tulevapaikkaRaycastHit.normal.y >= 0.9f)
+                        {
+                            kesken = true;
+                            valmis = false;
+                            tulevaPaikka2 = tulevapaikkaRaycastHit.point;
+                            kiipeys = false;
+                            roikkumispaikkaY = tulevapaikkaRaycastHit.point.y;
+                            roiku = true;
+                        }
                     }
                 }
             }
@@ -1096,7 +1225,7 @@ public class Kiipeäminen : MonoBehaviour
 
     }
 
-    // kiipeily kielekkeelle jonka alapuolella on tyhjää
+    //kiipeily kielekkeelle jonka alapuolella on tyhjää
     //Kiipeily tapahtuu periaatteella: jos eka ray ylös osuu ja aiempi ray osuu ja nykyinen ray ei osu
     //tai jos eka ray ylöspäin osuu ja mikään muu ray ei osu niin sitten ray ylhäältä alas ja jos sen osumakohta on korkeemmalla kuin eka ray ylös osumakohta
     public void KiipeilyKielekkeelle()
@@ -1149,12 +1278,16 @@ public class Kiipeäminen : MonoBehaviour
         Ray ray5Alas = new Ray(ray5.origin + (ray5.direction * 0.55f), -Vector3.up);
         RaycastHit ray5AlasHit;
 
+        RaycastHit tulevapaikkaRaycastHit;
+        RaycastHit capsuleCheckHit;
+
         UnityEngine.Debug.DrawRay(ray0Ylös.origin, ray0Ylös.direction.normalized * 2.84f, color: Color.yellow, 33);
 
         // eka ray eteenpäin. Jos ei osu, niin ray ylöspäin jonka pitää osua
         if (Physics.Raycast(ray0, maxDistance: 0.5f, hitInfo: out hitKielekkeelleRay0) == false && Physics.Raycast(ray: ray0Ylös, maxDistance: 2.84f, hitInfo: out ray0YlosHit) == true)
         {
-            if (ray0YlosHit.collider.tag != "Kasvis" && ray0YlosHit.collider.tag != "Enemy" && ray0YlosHit.collider.tag != "Miekka")
+            if (ray0YlosHit.collider.tag != "Kasvis" && ray0YlosHit.collider.tag != "Enemy" && ray0YlosHit.collider.tag != "Miekka" &&
+                        ray0YlosHit.collider.tag != "Lava" && ray0YlosHit.collider.tag != "Moukari")
             {
                 ray0YlösOsuiBool = true;
                 ray0JosEiOsuHitPiste = ray0YlosHit.point;
@@ -1188,27 +1321,31 @@ public class Kiipeäminen : MonoBehaviour
                     if (!Physics.CapsuleCast(point1, point2, radius, transform.forward, castDistance))
                     {
                         Ray tulevaPaikkaRay = new Ray(ray1.origin + (ray1.direction / 2), Vector3.down);
-                        RaycastHit tulevapaikkaRaycastHit;
 
-                        Physics.Raycast(tulevaPaikkaRay, maxDistance: Mathf.Infinity, hitInfo: out tulevapaikkaRaycastHit);
-
-                        Vector3 tokanCapsulenPoint1 = tulevaPaikkaRay.origin + col.center + Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
-                        Vector3 tokanCapsulenPoint2 = tulevaPaikkaRay.origin + col.center - Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
-
-                        if (!Physics.CapsuleCast(tokanCapsulenPoint1, tokanCapsulenPoint2, radius, -transform.up, tulevapaikkaRaycastHit.distance - 0.01f))
+                        if (Physics.Raycast(ray1.origin + (ray1.direction * taakseRayHit.distance) + (ray1.direction * 0.1f), Vector3.down, maxDistance: 1f, hitInfo: out tulevapaikkaRaycastHit)&&
+                            Physics.Raycast(tulevaPaikkaRay, maxDistance: Mathf.Infinity, hitInfo: out capsuleCheckHit))
                         {
-                            kesken = true;
-                            valmis = false;
-                            tulevaPaikka1 = ray1.origin + ray1.direction * 0.5f;
-                            tulevaPaikka2 = tulevapaikkaRaycastHit.point;
+                            if (tulevapaikkaRaycastHit.normal.y >= 0.9f)
+                            {
+                                Vector3 tokanCapsulenPoint1 = tulevaPaikkaRay.origin + col.center + Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
+                                Vector3 tokanCapsulenPoint2 = tulevaPaikkaRay.origin + col.center - Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
 
-                            kiipeys = true;
-                            liiku = true;
-                            transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-hitKielekkeelleRay0.normal.x, 0f, -hitKielekkeelleRay0.normal.z)) * transform.rotation;
-                        }
-                        else
-                        {
-                            ray1CapsuleCastOnnaa = false;
+                                if (!Physics.CapsuleCast(tokanCapsulenPoint1, tokanCapsulenPoint2, radius, -transform.up, capsuleCheckHit.distance - 0.01f))
+                                {
+                                    kesken = true;
+                                    valmis = false;
+                                    tulevaPaikka1 = ray1.origin + ray1.direction * 0.5f;
+                                    tulevaPaikka2 = tulevapaikkaRaycastHit.point;
+
+                                    kiipeys = true;
+                                    liiku = true;
+                                    transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-hitKielekkeelleRay0.normal.x, 0f, -hitKielekkeelleRay0.normal.z)) * transform.rotation;
+                                }
+                                else
+                                {
+                                    ray1CapsuleCastOnnaa = false;
+                                }
+                            }
                         }
                     }
                 }
@@ -1219,7 +1356,7 @@ public class Kiipeäminen : MonoBehaviour
             {
                 ray2OsuiBool = false;
 
-                if (ray1OsuiBool == true || ray1AlasOsuiBool == false || ray1CapsuleCastOnnaa == false)
+                if (ray1OsuiBool == true|| ray1AlasOsuiBool==false)
                 {
                     Physics.Raycast(ray: ray2Alas, maxDistance: Mathf.Infinity, hitInfo: out ray2AlasHit);
 
@@ -1238,27 +1375,31 @@ public class Kiipeäminen : MonoBehaviour
                         if (!Physics.CapsuleCast(point1, point2, radius, transform.forward, castDistance))
                         {
                             Ray tulevaPaikkaRay = new Ray(ray2.origin + (ray2.direction / 2), Vector3.down);
-                            RaycastHit tulevapaikkaRaycastHit;
 
-                            Physics.Raycast(tulevaPaikkaRay, maxDistance: Mathf.Infinity, hitInfo: out tulevapaikkaRaycastHit);
-
-                            Vector3 tokanCapsulenPoint1 = tulevaPaikkaRay.origin + col.center + Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
-                            Vector3 tokanCapsulenPoint2 = tulevaPaikkaRay.origin + col.center - Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
-
-                            if (!Physics.CapsuleCast(tokanCapsulenPoint1, tokanCapsulenPoint2, radius, -transform.up, tulevapaikkaRaycastHit.distance - 0.01f))
+                            if (Physics.Raycast(ray2.origin + (ray2.direction * taakseRayHit.distance) + (ray2.direction * 0.1f), Vector3.down, maxDistance: 1f, hitInfo: out tulevapaikkaRaycastHit)&&
+                                Physics.Raycast(tulevaPaikkaRay, maxDistance: Mathf.Infinity, hitInfo: out capsuleCheckHit))
                             {
-                                kesken = true;
-                                valmis = false;
-                                tulevaPaikka1 = ray2.origin + ray2.direction * 0.5f;
-                                tulevaPaikka2 = tulevapaikkaRaycastHit.point;
+                                if (tulevapaikkaRaycastHit.normal.y >= 0.9f)
+                                {
+                                    Vector3 tokanCapsulenPoint1 = tulevaPaikkaRay.origin + col.center + Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
+                                    Vector3 tokanCapsulenPoint2 = tulevaPaikkaRay.origin + col.center - Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
 
-                                kiipeys = true;
-                                liiku = true;
-                                transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-hitKielekkeelleRay1.normal.x, 0f, -hitKielekkeelleRay1.normal.z)) * transform.rotation;
-                            }
-                            else
-                            {
-                                ray2CapsuleCastOnnaa = false;
+                                    if (!Physics.CapsuleCast(tokanCapsulenPoint1, tokanCapsulenPoint2, radius, -transform.up, capsuleCheckHit.distance - 0.01f))
+                                    {
+                                        kesken = true;
+                                        valmis = false;
+                                        tulevaPaikka1 = ray2.origin + ray2.direction * 0.5f;
+                                        tulevaPaikka2 = tulevapaikkaRaycastHit.point;
+
+                                        kiipeys = true;
+                                        liiku = true;
+                                        transform.rotation = Quaternion.FromToRotation(transform.forward, new Vector3(-hitKielekkeelleRay1.normal.x, 0f, -hitKielekkeelleRay1.normal.z)) * transform.rotation;
+                                    }
+                                    else
+                                    {
+                                        ray2CapsuleCastOnnaa = false;
+                                    }
+                                }
                             }
                         }
                     }
@@ -1270,7 +1411,7 @@ public class Kiipeäminen : MonoBehaviour
             {
                 ray3OsuiBool = false;
 
-                if (ray2OsuiBool == true || ray2AlasOsuiBool == false || ray2CapsuleCastOnnaa == false)
+                if (ray2OsuiBool == true)
                 {
                     Physics.Raycast(ray: ray3Alas, maxDistance: Mathf.Infinity, hitInfo: out ray3AlasHit);
 
@@ -1278,12 +1419,12 @@ public class Kiipeäminen : MonoBehaviour
                     {
                         ray3AlasOsuiBool = true;
 
-                        Ray tulevaPaikkaRay = new Ray(ray3.origin + ((ray3.direction * hitKielekkeelleRay2.distance) + (ray3.direction * 0.1f)), Vector3.down);
-                        RaycastHit tulevapaikkaRaycastHit;
+                        Ray tulevaPaikkaRay = new Ray(ray3.origin + ((ray3.direction * taakseRayHit.distance) + (ray3.direction * 0.1f)), Vector3.down);
+                        
 
                         if (Physics.Raycast(tulevaPaikkaRay, maxDistance: Mathf.Infinity, hitInfo: out tulevapaikkaRaycastHit))
                         {
-                            if (tulevapaikkaRaycastHit.point.y - 0.01f > ray0Ylös.origin.y)
+                            if (tulevapaikkaRaycastHit.point.y - 0.01f > ray0Ylös.origin.y && tulevapaikkaRaycastHit.normal.y >= 0.9f)
                             {
                                 kesken = true;
                                 valmis = false;
@@ -1306,7 +1447,7 @@ public class Kiipeäminen : MonoBehaviour
             {
                 ray4OsuiBool = false;
 
-                if ((ray3OsuiBool == true || ray3AlasOsuiBool == false))
+                if (ray3OsuiBool == true)
                 {
                     Physics.Raycast(ray: ray4Alas, maxDistance: Mathf.Infinity, hitInfo: out ray4AlasHit);
 
@@ -1314,13 +1455,13 @@ public class Kiipeäminen : MonoBehaviour
                     {
                         ray4AlasOsuiBool = true;
 
-                        Ray tulevaPaikkaRay = new Ray(ray4.origin + ((ray4.direction * hitKielekkeelleRay3.distance) + (ray4.direction * 0.1f)), Vector3.down);
-                        RaycastHit tulevapaikkaRaycastHit;
+                        Ray tulevaPaikkaRay = new Ray(ray4.origin + ((ray4.direction * taakseRayHit.distance) + (ray4.direction * 0.1f)), Vector3.down);
 
                         if (Physics.Raycast(tulevaPaikkaRay, maxDistance: Mathf.Infinity, hitInfo: out tulevapaikkaRaycastHit))
                         {
-                            if (tulevapaikkaRaycastHit.point.y - 0.01f > ray0Ylös.origin.y)
+                            if (tulevapaikkaRaycastHit.point.y - 0.01f > ray0Ylös.origin.y&& tulevapaikkaRaycastHit.normal.y >= 0.9f)
                             {
+
                                 kesken = true;
                                 valmis = false;
                                 tulevaPaikka2 = tulevapaikkaRaycastHit.point;
@@ -1338,18 +1479,16 @@ public class Kiipeäminen : MonoBehaviour
             }
 
             //kuudes ray. Tällä kiivetään roikkumispaikkaan
-            if (Physics.Raycast(ray5, maxDistance: 0.55f, hitInfo: out hitKielekkeelleRay5) == false && ray5PoisToiminnasta == false)
+            if (Physics.Raycast(ray5, maxDistance: 0.55f, hitInfo: out hitKielekkeelleRay5) == false && ray5PoisToiminnasta == false&&!kiipeys&&!roiku)
             {
                 ray5OsuiBool = false;
 
-                if ((ray4OsuiBool == true || ray4AlasOsuiBool == false))
-                {
+
                     Ray tulevaPaikkaRay = new Ray(ray5.origin + ((ray5.direction * taakseRayHit.distance) + (ray5.direction * 0.1f)), Vector3.down);
-                    RaycastHit tulevapaikkaRaycastHit;
 
                     if (Physics.Raycast(tulevaPaikkaRay, maxDistance: Mathf.Infinity, hitInfo: out tulevapaikkaRaycastHit))
                     {
-                        if (tulevapaikkaRaycastHit.point.y - 0.01f > ray0Ylös.origin.y)
+                        if (tulevapaikkaRaycastHit.point.y - 0.01f > ray0Ylös.origin.y && tulevapaikkaRaycastHit.normal.y >= 0.9f)
                         {
                             kesken = true;
                             valmis = false;
@@ -1362,7 +1501,7 @@ public class Kiipeäminen : MonoBehaviour
                             kielekkeenPaikka = taakseRayHit.point;
                         }
                     }
-                }
+
             }
 
             //jos ei löydy kiipeilypaikkaa, kun ei löydy koloa tai tasannetta
@@ -2314,7 +2453,6 @@ public class Kiipeäminen : MonoBehaviour
             Ray rayNormalTulevaPositio = new Ray(RayNormalOrigin.position + new Vector3(0f, 1f, 0f), transform.forward);
             RaycastHit rr;
             UnityEngine.Debug.DrawRay(rayNormalTulevaPositio.origin, rayNormalTulevaPositio.direction, color: Color.red, 333f);
-            vääräSuunta = true;
 
             if (Physics.Raycast(rayNormalTulevaPositio, maxDistance: 0.5f, hitInfo: out rr) == false)
             {
