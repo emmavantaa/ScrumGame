@@ -7,6 +7,11 @@ TagManager:
   - Enemy
   - Miekka
   - VihunAlue
+  - Ground
+  - CarrotWall
+  - BunnyAmmo
+  - AmmoBun
+  - SpawnAmmo
   - Soul
   - Lava
   - Kasvis
