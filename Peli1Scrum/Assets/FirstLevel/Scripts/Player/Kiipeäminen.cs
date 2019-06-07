@@ -164,8 +164,8 @@ public class Kiipeäminen : MonoBehaviour
                             point2Keski = capsulenPaikkaKeski + col.center - Vector3.up * capsulenMatkaKeskeltäPointteihin;
                             float radius = col.radius * 0.1f;
 
-                            UnityEngine.Debug.DrawRay(point1Keski, osumanSuunta * (-Vector3.right.normalized * 0.37f), color: Color.black, 22);
-                            UnityEngine.Debug.DrawRay(point1Keski, osumanSuunta * (Vector3.right.normalized * 0.37f), color: Color.blue, 22);
+                            //UnityEngine.Debug.DrawRay(point1Keski, osumanSuunta * (-Vector3.right.normalized * 0.37f), color: Color.black, 22);
+                            //UnityEngine.Debug.DrawRay(point1Keski, osumanSuunta * (Vector3.right.normalized * 0.37f), color: Color.blue, 22);
                             RaycastHit hitInfoVasen;
                             RaycastHit hitInfoOikea;
 
@@ -299,7 +299,7 @@ public class Kiipeäminen : MonoBehaviour
                 }
             }
 
-            UnityEngine.Debug.DrawRay(ray0.origin, ray0.direction.normalized * 0.5f, color: Color.black, 33);
+            //UnityEngine.Debug.DrawRay(ray0.origin, ray0.direction.normalized * 0.5f, color: Color.black, 33);
 
             //Tsekataan että alin ray osuu seinään
             if (Physics.Raycast(ray0, out kiipeemisenAlotusHit, maxDistance: 0.5f))
@@ -454,7 +454,7 @@ public class Kiipeäminen : MonoBehaviour
         if (roiku && Input.GetKey("a") && transform.position == korjattuRoikkumisPaikka && transform.rotation == oikeaSuunta && eiVoiKiivetäVasemmalle == false)
         {
             Ray rayRoikkumistasoVasemmalle = new Ray(RayRoikkumisTasoKorkeusOrigin.position + (-transform.right.normalized * 0.1f), transform.forward);
-            UnityEngine.Debug.DrawRay(rayRoikkumistasoVasemmalle.origin, (rayRoikkumistasoVasemmalle.direction.normalized * 0.6f), color: Color.white, 33);
+            //UnityEngine.Debug.DrawRay(rayRoikkumistasoVasemmalle.origin, (rayRoikkumistasoVasemmalle.direction.normalized * 0.6f), color: Color.white, 33);
 
             //Tsekataan, että roikkumistasanne ei muutu seinäksi 0.1 yksikköä roikkumis seinästä pelaajan katsomissuuntaan (eli kun pelaaja on 0.5 yksikköä seinästä ja ray menee 0.6 yksikköä eteenpäin)
             if (Physics.Raycast(rayRoikkumistasoVasemmalle, maxDistance: 0.6f) == false)
@@ -468,7 +468,7 @@ public class Kiipeäminen : MonoBehaviour
         else if (roiku && Input.GetKey("d") && transform.position == korjattuRoikkumisPaikka && transform.rotation == oikeaSuunta && eiVoiKiivetäOikealle == false)
         {
             Ray rayRoikkumistasoOikealle = new Ray(RayRoikkumisTasoKorkeusOrigin.position + (transform.right.normalized * 0.1f), transform.forward);
-            UnityEngine.Debug.DrawRay(rayRoikkumistasoOikealle.origin, (rayRoikkumistasoOikealle.direction.normalized * 0.6f), color: Color.white, 33);
+            //UnityEngine.Debug.DrawRay(rayRoikkumistasoOikealle.origin, (rayRoikkumistasoOikealle.direction.normalized * 0.6f), color: Color.white, 33);
 
             //Tsekataan, että roikkumistasanne ei muutu seinäksi 0.1 yksikköä roikkumis seinästä pelaajan katsomissuuntaan (eli kun pelaaja on 0.5 yksikköä seinästä ja ray menee 0.6 yksikköä eteenpäin)
             if (Physics.Raycast(rayRoikkumistasoOikealle, maxDistance: 0.6f) == false)
@@ -497,14 +497,14 @@ public class Kiipeäminen : MonoBehaviour
                 liiku = true;
                 Ray rayKorkeusCheck = new Ray((RayRoikkumisTasoKorkeusOrigin.position+(transform.forward.normalized*0.6f)), -transform.up);
                 RaycastHit rayKorkeusCheckHit;
-                UnityEngine.Debug.DrawRay(rayKorkeusCheck.origin, rayKorkeusCheck.direction.normalized * 0.2f, color: Color.magenta, 8);
+                //UnityEngine.Debug.DrawRay(rayKorkeusCheck.origin, rayKorkeusCheck.direction.normalized * 0.2f, color: Color.magenta, 8);
                 if (Physics.Raycast(rayKorkeusCheck, maxDistance: 0.2f, hitInfo: out rayKorkeusCheckHit))
                 {
                     
                     roikkumispaikka.y = rayKorkeusCheckHit.point.y - 1f;
 
                     Ray rayNormal = new Ray(RayNormalOrigin.position, transform.forward);
-                    UnityEngine.Debug.DrawRay(rayNormal.origin, rayNormal.direction, color: Color.grey, 3);
+                    //UnityEngine.Debug.DrawRay(rayNormal.origin, rayNormal.direction, color: Color.grey, 3);
                     //Pidetään etäisyys seinästä 0.5 yksikköä
                     if (Physics.Raycast(rayNormal, maxDistance: 1, hitInfo: out RaycastHitNormal))
                     {
@@ -522,7 +522,7 @@ public class Kiipeäminen : MonoBehaviour
                 liiku = true;
 
                 Ray rayNormal = new Ray(new Vector3(RayNormalOrigin.position.x, roikkumispaikkaY, RayNormalOrigin.position.z) - (transform.forward * 0.5f), transform.forward);
-                UnityEngine.Debug.DrawRay(rayNormal.origin, rayNormal.direction, color: Color.yellow, 55);
+                //UnityEngine.Debug.DrawRay(rayNormal.origin, rayNormal.direction, color: Color.yellow, 55);
 
                 //Hyppyroikkumis position korjaus
                 if (roikkuminenHypystä == true)
@@ -573,14 +573,14 @@ public class Kiipeäminen : MonoBehaviour
         {
             Ray rayNormalTulevaPositio = new Ray(RayNormalOrigin.position + new Vector3(0f, 1f, 0f), transform.forward);
             RaycastHit rr;
-            UnityEngine.Debug.DrawRay(rayNormalTulevaPositio.origin, rayNormalTulevaPositio.direction, color: Color.red, 333f);
+            //UnityEngine.Debug.DrawRay(rayNormalTulevaPositio.origin, rayNormalTulevaPositio.direction, color: Color.red, 333f);
 
             //Jos pisteestä raynormal origin +1 ylöspäin ray +1 eteenpäin ei osu, eli ei ole seinää tasanteen päällä 
             if (Physics.Raycast(rayNormalTulevaPositio, maxDistance: 0.5f, hitInfo: out rr) == false)
             {
                 Ray rayNormalTulevaPositio1 = new Ray(RayNormalOrigin.position + new Vector3(0f, 1f, 0f) + (transform.forward * 0.7f), -transform.up);
                 RaycastHit rayNormalTulevaPositio1Hit;
-                UnityEngine.Debug.DrawRay(rayNormalTulevaPositio1.origin, rayNormalTulevaPositio1.direction, color: Color.green, 333f);
+                //UnityEngine.Debug.DrawRay(rayNormalTulevaPositio1.origin, rayNormalTulevaPositio1.direction, color: Color.green, 333f);
 
                 //Jos pisteestä raynormal origin +1 ylöspäin +0.7 eteenpäin ray alaspäin +1 osuu, niin siitä tulee tulevapaikka
                 if (Physics.Raycast(rayNormalTulevaPositio1, maxDistance: Mathf.Infinity, hitInfo: out rayNormalTulevaPositio1Hit))
@@ -707,11 +707,11 @@ public class Kiipeäminen : MonoBehaviour
                 Ray rayVasemmalle = new Ray(RayNormalOrigin.position, -transform.right);
 
                 //UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction, color: Color.red);
-                UnityEngine.Debug.DrawRay(rayVasemmalle.origin, rayVasemmalle.direction.normalized * 0.7f, color: Color.yellow, 25f);
-                UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction.normalized * 0.6f, color: Color.black, 25f);
+                //UnityEngine.Debug.DrawRay(rayVasemmalle.origin, rayVasemmalle.direction.normalized * 0.7f, color: Color.yellow, 25f);
+                //UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction.normalized * 0.6f, color: Color.black, 25f);
 
                 Ray rayRoikkumistasoVasemmalle = new Ray(RayRoikkumisTasoKorkeusOrigin.position, -transform.right);
-                UnityEngine.Debug.DrawRay(rayRoikkumistasoVasemmalle.origin, (rayRoikkumistasoVasemmalle.direction.normalized * 0.75f), color: Color.magenta, 33);
+                //UnityEngine.Debug.DrawRay(rayRoikkumistasoVasemmalle.origin, (rayRoikkumistasoVasemmalle.direction.normalized * 0.75f), color: Color.magenta, 33);
 
                 capsulenLähtöpaikka = col.transform.position;
                 float raycapsulenMatkaKeskeltäPointteihin = col.height / 2 - col.radius;
@@ -746,8 +746,8 @@ public class Kiipeäminen : MonoBehaviour
                         else
                         {
                             Ray raySuunnanVaihto = new Ray(RayNormalOrigin.position + (-transform.right * 0.3f) + (transform.forward * 0.7f), transform.right);
-                            UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
- 
+                            //UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
+
                             capsulenLähtöpaikka = col.transform.position + (-transform.right * 0.4f);
                             point1 = capsulenLähtöpaikka + col.center + Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
                             point2 = capsulenLähtöpaikka + col.center - Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
@@ -789,7 +789,7 @@ public class Kiipeäminen : MonoBehaviour
                         if (!Physics.CapsuleCast(point1, point2, radius, transform.forward, castDistance))
                         {
                             Ray raySuunnanVaihto = new Ray(RayNormalOrigin.position + (-transform.right * 0.3f) + (transform.forward * 0.7f), transform.right);
-                            UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
+                            //UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
 
                             //Tsekataan kääntyykö seinä
                             if (Physics.Raycast(raySuunnanVaihto, maxDistance: 0.6f, hitInfo: out rayCastHitSuunnanVaihto))
@@ -831,7 +831,7 @@ public class Kiipeäminen : MonoBehaviour
                 //UnityEngine.Debug.DrawRay(rayOikealle.origin, rayOikealle.direction.normalized * 0.7f, color: Color.yellow, 25f);
                 //UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction.normalized * 0.6f, color: Color.black, 25f);
                 //UnityEngine.Debug.DrawRay(rayRoikkumistasoOikealle.origin, (rayRoikkumistasoOikealle.direction.normalized * 0.75f), color: Color.magenta, 33);
-                UnityEngine.Debug.DrawRay(rayKorkeusCheck.origin, rayKorkeusCheck.direction.normalized * 0.2f, color: Color.yellow, 25f);
+                //UnityEngine.Debug.DrawRay(rayKorkeusCheck.origin, rayKorkeusCheck.direction.normalized * 0.2f, color: Color.yellow, 25f);
 
 
                 capsulenLähtöpaikka = col.transform.position;
@@ -866,7 +866,7 @@ public class Kiipeäminen : MonoBehaviour
                         else
                         {
                             Ray raySuunnanVaihto = new Ray(RayNormalOrigin.position + (transform.right * 0.3f) + (transform.forward * 0.7f), -transform.right);
-                            UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
+                            //UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
 
                             capsulenLähtöpaikka = col.transform.position + (transform.right * 0.4f);
                             point1 = capsulenLähtöpaikka + col.center + Vector3.up * raycapsulenMatkaKeskeltäPointteihin;
@@ -910,7 +910,7 @@ public class Kiipeäminen : MonoBehaviour
                         if (!Physics.CapsuleCast(point1, point2, radius, transform.forward, castDistance))
                         {
                             Ray raySuunnanVaihto = new Ray(RayNormalOrigin.position + (transform.right * 0.3f) + (transform.forward * 0.7f), -transform.right);
-                            UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
+                            //UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
 
                             //Tsekataan kääntyykö seinä
                             if (Physics.Raycast(raySuunnanVaihto, maxDistance: 0.6f, hitInfo: out rayCastHitSuunnanVaihto))
@@ -1281,7 +1281,7 @@ public class Kiipeäminen : MonoBehaviour
         RaycastHit tulevapaikkaRaycastHit;
         RaycastHit capsuleCheckHit;
 
-        UnityEngine.Debug.DrawRay(ray0Ylös.origin, ray0Ylös.direction.normalized * 2.84f, color: Color.yellow, 33);
+        //UnityEngine.Debug.DrawRay(ray0Ylös.origin, ray0Ylös.direction.normalized * 2.84f, color: Color.yellow, 33);
 
         // eka ray eteenpäin. Jos ei osu, niin ray ylöspäin jonka pitää osua
         if (Physics.Raycast(ray0, maxDistance: 0.5f, hitInfo: out hitKielekkeelleRay0) == false && Physics.Raycast(ray: ray0Ylös, maxDistance: 2.84f, hitInfo: out ray0YlosHit) == true)
@@ -2295,7 +2295,7 @@ public class Kiipeäminen : MonoBehaviour
 
             if (Physics.Raycast(hh, out kiipeemisenAlotusHit, maxDistance: 0.5f))
             {
-                UnityEngine.Debug.DrawRay(hh.origin, hh.direction, color: Color.red, 3);
+                //UnityEngine.Debug.DrawRay(hh.origin, hh.direction, color: Color.red, 3);
                 var gg = Quaternion.FromToRotation(Vector3.up, -kiipeemisenAlotusHit.normal).eulerAngles;
 
                 //transform.rotation = Quaternion.LookRotation(-kk.normal);
@@ -2412,7 +2412,7 @@ public class Kiipeäminen : MonoBehaviour
                 liiku = true;
 
                 Ray rayNormal = new Ray(RayNormalOrigin.position, transform.forward);
-                UnityEngine.Debug.DrawRay(rayNormal.origin, rayNormal.direction, color: Color.red, 3);
+                //UnityEngine.Debug.DrawRay(rayNormal.origin, rayNormal.direction, color: Color.red, 3);
 
                 if (Physics.Raycast(rayNormal, maxDistance: 1, hitInfo: out RaycastHitNormal))
                 {
@@ -2452,13 +2452,13 @@ public class Kiipeäminen : MonoBehaviour
 
             Ray rayNormalTulevaPositio = new Ray(RayNormalOrigin.position + new Vector3(0f, 1f, 0f), transform.forward);
             RaycastHit rr;
-            UnityEngine.Debug.DrawRay(rayNormalTulevaPositio.origin, rayNormalTulevaPositio.direction, color: Color.red, 333f);
+            //UnityEngine.Debug.DrawRay(rayNormalTulevaPositio.origin, rayNormalTulevaPositio.direction, color: Color.red, 333f);
 
             if (Physics.Raycast(rayNormalTulevaPositio, maxDistance: 0.5f, hitInfo: out rr) == false)
             {
                 Ray rayNormalTulevaPositio1 = new Ray(RayNormalOrigin.position + new Vector3(0f, 1f, 0f) + (transform.forward * 0.7f), -transform.up);
                 RaycastHit rayNormalTulevaPositio1Hit;
-                UnityEngine.Debug.DrawRay(rayNormalTulevaPositio1.origin, rayNormalTulevaPositio1.direction, color: Color.green, 333f);
+                //UnityEngine.Debug.DrawRay(rayNormalTulevaPositio1.origin, rayNormalTulevaPositio1.direction, color: Color.green, 333f);
                 if (Physics.Raycast(rayNormalTulevaPositio1, maxDistance: Mathf.Infinity, hitInfo: out rayNormalTulevaPositio1Hit))
                 {
                     float raycapsulenMatkaKeskeltäPointteihin = col.height / 2 - col.radius;
@@ -2534,7 +2534,7 @@ public class Kiipeäminen : MonoBehaviour
                 Ray rayVasemmalle = new Ray(RayNormalOrigin.position, -transform.right);
 
                 //UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction, color: Color.red);
-                UnityEngine.Debug.DrawRay(rayVasemmalle.origin, rayVasemmalle.direction.normalized * 0.8f, color: Color.yellow, 25f);
+                //UnityEngine.Debug.DrawRay(rayVasemmalle.origin, rayVasemmalle.direction.normalized * 0.8f, color: Color.yellow, 25f);
 
                 if (Physics.Raycast(rayVasemmalle, maxDistance: 0.8f, hitInfo: out RaycastHitNormal1))
                 {
@@ -2563,7 +2563,7 @@ public class Kiipeäminen : MonoBehaviour
                 else
                 {
                     Ray raySuunnanVaihto = new Ray(RayNormalOrigin.position + (-transform.right * 0.1f) + (transform.forward * 0.7f), transform.right);
-                    UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
+                    //UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
                     if (Physics.Raycast(raySuunnanVaihto, maxDistance: 0.6f, hitInfo: out rayCastHitSuunnanVaihto))
                     {
                         roikkumispaikka = rayCastHitSuunnanVaihto.point - (raySuunnanVaihto.direction / 2);
@@ -2595,8 +2595,8 @@ public class Kiipeäminen : MonoBehaviour
                 Ray rayNormal1 = new Ray(RayNormalOrigin.position + (transform.right * 0.1f), transform.forward);
                 Ray rayOikealle = new Ray(RayNormalOrigin.position, transform.right);
                 //UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction, color: Color.red);
-                UnityEngine.Debug.DrawRay(rayOikealle.origin, rayOikealle.direction.normalized * 0.8f, color: Color.yellow, 25f);
-                UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction.normalized * 0.6f, color: Color.yellow, 25f);
+                //UnityEngine.Debug.DrawRay(rayOikealle.origin, rayOikealle.direction.normalized * 0.8f, color: Color.yellow, 25f);
+                //UnityEngine.Debug.DrawRay(rayNormal1.origin, rayNormal1.direction.normalized * 0.6f, color: Color.yellow, 25f);
 
                 if (Physics.Raycast(rayOikealle, maxDistance: 0.8f, hitInfo: out RaycastHitNormal1))
                 {
@@ -2626,7 +2626,7 @@ public class Kiipeäminen : MonoBehaviour
                     else
                     {
                         Ray raySuunnanVaihto = new Ray(RayNormalOrigin.position + (transform.right * 0.3f) + (transform.forward * 0.7f), -transform.right);
-                        UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
+                        //UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
                         if (Physics.Raycast(raySuunnanVaihto, maxDistance: 0.6f, hitInfo: out rayCastHitSuunnanVaihto))
                         {
                             roikkumispaikka = rayCastHitSuunnanVaihto.point - (raySuunnanVaihto.direction / 2);
@@ -2649,7 +2649,7 @@ public class Kiipeäminen : MonoBehaviour
                     //Se osuu siihen seuraavaan seinään
 
                     Ray raySuunnanVaihto = new Ray(RayNormalOrigin.position + (transform.right * 0.1f) + (transform.forward * 0.7f), -transform.right);
-                    UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
+                    //UnityEngine.Debug.DrawRay(raySuunnanVaihto.origin, raySuunnanVaihto.direction, color: Color.blue, 25f);
                     if (Physics.Raycast(raySuunnanVaihto, maxDistance: 0.6f, hitInfo: out rayCastHitSuunnanVaihto))
                     {
                         roikkumispaikka = rayCastHitSuunnanVaihto.point - (raySuunnanVaihto.direction / 2);

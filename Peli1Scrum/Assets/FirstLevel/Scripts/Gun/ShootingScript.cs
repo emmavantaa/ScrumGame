@@ -17,8 +17,8 @@ public class ShootingScript : MonoBehaviour
 
     public GameObject ammoObj;
 
-
-    private bool isOut;
+    [HideInInspector]
+    public bool isOut;
 
 
 private void Start()

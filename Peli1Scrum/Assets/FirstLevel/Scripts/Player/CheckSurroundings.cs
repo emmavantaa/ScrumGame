@@ -50,7 +50,7 @@ public class CheckSurroundings : MonoBehaviour
         else if (cc.isGrounded)
         {
             falling = false;
-            UnityEngine.Debug.DrawRay(checkGroundRay.origin, Vector3.down * 0.05f, color: Color.blue, 55f);
+            //UnityEngine.Debug.DrawRay(checkGroundRay.origin, Vector3.down * 0.05f, color: Color.blue, 55f);
             lastGroundHitPoint = transform.position;
         }
         else

@@ -276,7 +276,7 @@ public class BasicEnemy : MonoBehaviour
                 var rayCastDirection= Quaternion.LookRotation(newDirDash);
 
                 Ray collisionCheckRay = new Ray(transform.position + new Vector3(0f, 0.1f, 0f), newDirDash);
-                UnityEngine.Debug.DrawRay(collisionCheckRay.origin, transform.forward, color: Color.cyan, 2f);
+                //UnityEngine.Debug.DrawRay(collisionCheckRay.origin, transform.forward, color: Color.cyan, 2f);
 
                 //Pelaajan x ja z suunta + 0.001f vihollisesta katsottuna
                 var targetXPlus= targetDirY0Normalized.x+0.001f;
@@ -369,7 +369,7 @@ public class BasicEnemy : MonoBehaviour
                 float step = (turnSpeed) * Time.deltaTime;
 
                 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
-                UnityEngine.Debug.DrawRay(transform.position, newDir, Color.red);
+                //UnityEngine.Debug.DrawRay(transform.position, newDir, Color.red);
                 newDir.y = 0;
                 Quaternion rotNewDir = Quaternion.LookRotation(targetDir);
 
@@ -397,7 +397,7 @@ public class BasicEnemy : MonoBehaviour
                 float step = turnSpeed * Time.deltaTime;
 
                 newDir = Vector3.RotateTowards(-transform.right, targetDir, step, 0.0f);
-                UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
+                //UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
                 newDir.y = 0;
 
                 // Move our position a step closer to the target.
@@ -416,7 +416,7 @@ public class BasicEnemy : MonoBehaviour
                 float step = turnSpeed * Time.deltaTime;
 
                 newDir = Vector3.RotateTowards(transform.right, targetDir, step, 0.0f);
-                UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
+                //UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
                 newDir.y = 0;
 
                 // Move our position a step closer to the target.
@@ -449,7 +449,7 @@ public class BasicEnemy : MonoBehaviour
             Ray collisionCheckRayLeft = new Ray(transform.position + new Vector3(0f, -0.3f, 0f) + (-transform.right * 0.5f), -transform.right);
             Ray collisionCheckRayRight = new Ray(transform.position + new Vector3(0f, -0.3f, 0f) + (transform.right * 0.5f), transform.right);
             RaycastHit lavaFallCheckRayHit = new RaycastHit();
-            UnityEngine.Debug.DrawRay(lavaFallCheckRay.origin, -transform.up.normalized * 2, Color.black, 10f);
+            //UnityEngine.Debug.DrawRay(lavaFallCheckRay.origin, -transform.up.normalized * 2, Color.black, 10f);
             Vector3 targetDir;
             Vector3 newDir;
 
@@ -473,7 +473,7 @@ public class BasicEnemy : MonoBehaviour
                 float step = turnSpeed * Time.deltaTime;
 
                 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
-                UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
+                //UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
                 newDir.y = 0;
 
                 // Move our position a step closer to the target.
@@ -492,7 +492,7 @@ public class BasicEnemy : MonoBehaviour
                 float step = turnSpeed * Time.deltaTime;
 
                 newDir = Vector3.RotateTowards(-transform.right, targetDir, step, 0.0f);
-                UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
+                //UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
                 newDir.y = 0;
 
                 // Move our position a step closer to the target.
@@ -511,7 +511,7 @@ public class BasicEnemy : MonoBehaviour
                 float step = turnSpeed * Time.deltaTime;
 
                 newDir = Vector3.RotateTowards(transform.right, targetDir, step, 0.0f);
-                UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
+                //UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
                 newDir.y = 0;
 
                 // Move our position a step closer to the target.
@@ -530,7 +530,7 @@ public class BasicEnemy : MonoBehaviour
             //    float step = turnSpeed * Time.deltaTime;
 
             //    Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir.normalized, step, 0.0f);
-            //    UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
+            //    //UnityEngine.Debug.DrawRay(transform.position, (newDir.normalized * 11f), Color.blue);
             //    newDir.y = 0;
 
             //    // Move our position a step closer to the target.

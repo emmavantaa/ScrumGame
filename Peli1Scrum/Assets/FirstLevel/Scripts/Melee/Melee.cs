@@ -13,6 +13,8 @@ public class Melee : MonoBehaviour
     Keräily keräilyScript;
     GameObject player;
     GameObject säilytyspaikka;
+    ShootingScript shootingScript;
+    GameObject gun;
     //public GameObject player;
     public float latausSpeed = 1f;
     public float lyontiSpeed = 6;
@@ -36,6 +38,7 @@ public class Melee : MonoBehaviour
 
         peruspaikka = GameObject.Find("MeleeWeaponPlace");
         keräilyScript = player.GetComponent<Keräily>();
+        shootingScript = player.GetComponent<ShootingScript>();
         takas = false;
         esillä = true;
 
@@ -44,16 +47,16 @@ public class Melee : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (shootingScript.isOut)
+        {
+            gun = GameObject.Find("Bunnyzooka");
+        }
 
         if (gameObject.GetComponent<Collider>().isTrigger == false)
         {
             Physics.IgnoreCollision(player.GetComponent<Collider>(), this.gameObject.GetComponent<Collider>());
 
         }
-        Vector3 miekkaPiiloon = transform.position + new Vector3(-0.5f, 0, 0.5f);
-        Vector3 miekkaEsiin = transform.position + new Vector3(0.5f, 0, -0.5f);
-        Vector3 perusasento = player.transform.localPosition + new Vector3(-0.25f, 0, 0);
-        Vector3 lyontipiste = player.transform.localPosition + new Vector3(-0.25f, 0, 1f);
         tf = transform.localPosition.ToString();
         sp = säilytyspaikka.transform.localPosition.ToString();
         pp = peruspaikka.transform.localPosition.ToString();
@@ -69,22 +72,18 @@ public class Melee : MonoBehaviour
         {
             esillä = true;
         }
-        if (Input.GetKeyDown("1") && keräilyScript.collectedMelee && esillä == true && tf == pp)
+        //Otetaan melee ase esille jos painetaan nappia
+        if (Input.GetKeyDown("1") && keräilyScript.collectedMelee && !esillä)
         {
-            rotation = transform.localRotation;
-
-            transform.localRotation = Quaternion.Euler(0, 0, 90);
-            //transform.Translate(parentti.transform.localPosition+miekkaPiiloon,Space.Self);
-            transform.localPosition = säilytyspaikka.transform.localPosition;
+            UseMeleeWeapon();
         }
 
-        else if (Input.GetKeyDown("1") && keräilyScript.collectedMelee && !esillä && tf == sp)
+        //Laitetaan melee ase selkään jos painetaan nappia tai laitetaan automaattisesti selkään jos pyssy otetaan esille
+        else if (Input.GetKeyDown("1") && keräilyScript.collectedMelee && esillä|| esillä && shootingScript.isOut)
         {
-            esillä = true;
-            transform.localRotation = rotation;
-            //transform.Translate (parentti.transform.localPosition - miekkaPiiloon,Space.Self);
-            transform.localPosition = peruspaikka.transform.localPosition;
+            DontUseMeleeWeapon();
         }
+
         if (esillä)
         {
             if (Input.GetMouseButton(0) && painettu == false && lyo == false)
@@ -95,10 +94,6 @@ public class Melee : MonoBehaviour
                 }
             }
 
-            //if (transform.position== latauspaikka.transform.position)
-            //{
-            //    var hemee = 1;
-            //}
             if (Input.GetMouseButtonUp(0) && keräilyScript.collectedMelee == true && painettu && tf == lp)
             {
                 lyo = true;
@@ -144,163 +139,32 @@ public class Melee : MonoBehaviour
 
         }
     }
-    private void OnCollisionEnter(Collision collision)
+
+    public void UseMeleeWeapon() //Otetaan melee ase esille
     {
 
-        if (collision.gameObject.tag == "Enemy" && collision.gameObject != null)
+        if (Input.GetKeyDown("1") && keräilyScript.collectedMelee && !esillä)
         {
-            //collision.gameObject.GetComponent<BasicEnemy>().takeDamage();
-            collision.gameObject.GetComponent<VihuHealth>().takeDamage();
+            if (shootingScript.isOut)
+            {
+                gun.SetActive(false);
+                shootingScript.isOut = false;
+            }
 
-        }
-
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "VihunAlue")
-        {
-            Physics.IgnoreCollision(other.gameObject.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
-        }
-
-        if (other.gameObject.tag == "Enemy" && other.gameObject != null && lyo)
-        {
-            //collision.gameObject.GetComponent<BasicEnemy>().takeDamage();
-            other.gameObject.GetComponent<VihuHealth>().takeDamage();
-
-        }
-    }
-    private void FixedUpdate()
-    {
-        //tf = transform.localPosition.ToString();
-        //sp = säilytyspaikka.transform.localPosition.ToString();
-        //pp = peruspaikka.transform.localPosition.ToString();
-        //lp = latauspaikka.transform.localPosition.ToString();
-        //lyp = lyontipaikka.transform.localPosition.ToString();
-
-        //if (esillä)
-        //{
-            
-        //}
-    }
-}
-
-//Vanha. Ei käytössä, mutta pitää vielä varmistaa, että uus varmasti toimii
-public class Melee2 : MonoBehaviour
-{
-    bool painettu = false;
-    GameObject peruspaikka;
-    GameObject lyontipaikka;
-    GameObject latauspaikka;
-    Keräily keräilyScript;
-    GameObject player;
-    GameObject säilytyspaikka;
-    //public GameObject player;
-    float latausSpeed = 1f;
-    float lyontiSpeed = 6;
-    bool lyo;
-    bool takas;
-    bool esillä;
-    Quaternion rotation;
-    // Start is called before the first frame update
-    void Start()
-    {
-        player = GameObject.FindGameObjectWithTag("Player");
-        lyontipaikka = GameObject.Find("MeleeWeaponEtuPlace");
-        latauspaikka = GameObject.Find("MeleeWeaponTakaPlace");
-        säilytyspaikka = GameObject.Find("MeleeWeaponSäilytysPlace");
-
-        peruspaikka = GameObject.Find("MeleeWeaponPlace");
-        keräilyScript = player.GetComponent<Keräily>();
-        takas = false;
-        esillä = true;
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-        if (gameObject.GetComponent<Collider>().isTrigger == false)
-        {
-            Physics.IgnoreCollision(player.GetComponent<Collider>(), this.gameObject.GetComponent<Collider>());
-
-        }
-        Vector3 miekkaPiiloon = transform.position + new Vector3(-0.5f, 0, 0.5f);
-        Vector3 miekkaEsiin = transform.position + new Vector3(0.5f, 0, -0.5f);
-        Vector3 perusasento = player.transform.localPosition + new Vector3(-0.25f, 0, 0);
-        Vector3 lyontipiste = player.transform.localPosition + new Vector3(-0.25f, 0, 1f);
-
-        if (transform.localPosition == säilytyspaikka.transform.localPosition)
-        {
-            esillä = false;
-        }
-        if (transform.localPosition == peruspaikka.transform.localPosition)
-        {
-            esillä = true;
-        }
-        if (Input.GetKeyDown("1") && keräilyScript.collectedMelee && esillä == true && transform.position == peruspaikka.transform.position)
-        {
-            rotation = transform.localRotation;
-
-            transform.localRotation = Quaternion.Euler(0, 0, 90);
-            //transform.Translate(parentti.transform.localPosition+miekkaPiiloon,Space.Self);
-            transform.localPosition = säilytyspaikka.transform.localPosition;
-        }
-
-        else if (Input.GetKeyDown("1") && keräilyScript.collectedMelee && !esillä && transform.position == säilytyspaikka.transform.position)
-        {
-            esillä = true;
             transform.localRotation = rotation;
-            //transform.Translate (parentti.transform.localPosition - miekkaPiiloon,Space.Self);
             transform.localPosition = peruspaikka.transform.localPosition;
         }
-        if (esillä)
-        {
-
-
-            if (Input.GetMouseButton(0) && painettu == false && lyo == false)
-            {
-                if (transform.position == peruspaikka.transform.position)
-                {
-                    painettu = true;
-                }
-
-
-            }
-            if (Input.GetMouseButtonUp(0) && keräilyScript.collectedMelee == true)
-            {
-                lyo = true;
-            }
-            if (painettu)
-            {
-                float step = latausSpeed * Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, latauspaikka.transform.position, step);
-            }
-            if (lyo && takas == false)
-            {
-                float step = lyontiSpeed * Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, lyontipaikka.transform.position, step);
-
-                if (transform.position == lyontipaikka.transform.position)
-                {
-                    takas = true;
-                    lyo = false;
-                }
-            }
-            else if (takas == true)
-            {
-                float step = latausSpeed * Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, peruspaikka.transform.position, step);
-
-                if (transform.position == peruspaikka.transform.position)
-                {
-                    takas = false;
-                    painettu = false;
-
-                }
-            }
-        }
     }
+
+
+    public void DontUseMeleeWeapon() //Laitetaan melee ase selkään
+    {
+        rotation = transform.localRotation;
+        transform.localRotation = Quaternion.Euler(0, 0, 90);
+        transform.localPosition = säilytyspaikka.transform.localPosition;
+    }
+
+
     private void OnCollisionEnter(Collision collision)
     {
 
@@ -326,8 +190,6 @@ public class Melee2 : MonoBehaviour
 
         }
     }
-    private void FixedUpdate()
-    {
 
-    }
 }
+

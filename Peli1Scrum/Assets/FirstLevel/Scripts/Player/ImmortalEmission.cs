@@ -5,33 +5,97 @@ using System.Diagnostics;
 //[DebuggerStepThrough]
 public class ImmortalEmission : MonoBehaviour
 {
-    public bool bloodEmission;
-    public bool lavaEmission;
-    public bool FallBloodEmission;
-    public bool FallBlueEmission;
+    public bool bloodEmissionOn;
+    public bool lavaEmissionOn;
+    public bool FallBloodEmissionOn;
+    public bool FallBlueEmissionOn;
+    GameObject player;
+    Transform lavaGameObject;
+    Transform bloodGameObject;
+    Transform fallGameObject;
+    ParticleSystem lavaParticleSystem;
+    ParticleSystem bloodParticleSystem;
+    ParticleSystem fallParticleSystem;
+    ParticleSystem.EmissionModule lavaEmission;
+    ParticleSystem.EmissionModule bloodEmission;
+    ParticleSystem.EmissionModule fallEmission;
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = gameObject;
+
+        if (lavaEmissionOn)
+        {
+            lavaGameObject = transform.Find("ImmortalityMomentLava");
+            lavaParticleSystem = lavaGameObject.GetComponent<ParticleSystem>();
+            lavaEmission = lavaParticleSystem.emission;
+            lavaEmission.enabled = true;
+        }
+        else if (!lavaEmissionOn)
+        {
+            lavaGameObject = transform.Find("ImmortalityMomentLava");
+            lavaParticleSystem = lavaGameObject.GetComponent<ParticleSystem>();
+            lavaEmission = lavaParticleSystem.emission;
+            lavaEmission.enabled = false;
+        }
+        if (bloodEmissionOn)
+        {
+            bloodGameObject = transform.Find("ImmortalityMomentBlood");
+            bloodParticleSystem = bloodGameObject.GetComponent<ParticleSystem>();
+            bloodEmission = bloodParticleSystem.emission;
+            bloodEmission.enabled = true;
+        }
+        else if (!bloodEmissionOn)
+        {
+            bloodGameObject = transform.Find("ImmortalityMomentBlood");
+            bloodParticleSystem = bloodGameObject.GetComponent<ParticleSystem>();
+            bloodEmission = bloodParticleSystem.emission;
+            bloodEmission.enabled = false;
+        }
+        if (FallBloodEmissionOn)
+        {
+            FallBlueEmissionOn = false;
+            fallGameObject = transform.Find("ImmortalityMomentFallBlood");
+            fallParticleSystem = fallGameObject.GetComponent<ParticleSystem>();
+            fallEmission = fallParticleSystem.emission;
+            fallEmission.enabled = true;
+        }
+        else if(!FallBloodEmissionOn)
+        {
+            fallGameObject = transform.Find("ImmortalityMomentFallBlood");
+            fallParticleSystem = fallGameObject.GetComponent<ParticleSystem>();
+            fallEmission = fallParticleSystem.emission;
+            fallEmission.enabled = false;
+        }
+        if (FallBlueEmissionOn)
+        {
+            FallBloodEmissionOn = false;
+            fallGameObject = transform.Find("ImmortalityMomentFallBlue");
+            fallParticleSystem = fallGameObject.GetComponent<ParticleSystem>();
+            fallEmission = fallParticleSystem.emission;
+            fallEmission.enabled = true;
+        }
+        else if (!FallBlueEmissionOn)
+        {
+            fallGameObject = transform.Find("ImmortalityMomentFallBlue");
+            fallParticleSystem = fallGameObject.GetComponent<ParticleSystem>();
+            fallEmission = fallParticleSystem.emission;
+            fallEmission.enabled = false;
+        }
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (FallBloodEmission)
-        {
-            FallBlueEmission = false;
-        }
-        else if (FallBlueEmission)
-        {
-            FallBloodEmission = false;
-        }
+
     }
 
     public void LavaEmissionOn()
     {
 
-        if (lavaEmission)
+        if (lavaEmissionOn)
         {
             var player = gameObject;
             if (player != null)
@@ -53,7 +117,7 @@ public class ImmortalEmission : MonoBehaviour
     }
     public void LavaEmissionOff()
     {
-        if (lavaEmission)
+        if (lavaEmissionOn)
         {
             var player = gameObject;
             if (player != null)
@@ -75,7 +139,7 @@ public class ImmortalEmission : MonoBehaviour
     }
     public void BloodEmissionOn()
     {
-        if (bloodEmission)
+        if (bloodEmissionOn)
         {
             var player = gameObject;
             if (player != null)
@@ -97,7 +161,7 @@ public class ImmortalEmission : MonoBehaviour
     }
     public void BloodEmissionOff()
     {
-        if (bloodEmission)
+        if (bloodEmissionOn)
         {
             var player = gameObject;
             if (player != null)
@@ -119,7 +183,7 @@ public class ImmortalEmission : MonoBehaviour
     }
     public void FallEmissionOn()
     {
-        if (FallBloodEmission)
+        if (FallBloodEmissionOn)
         {
             var player = gameObject;
             if (player != null)
@@ -136,7 +200,7 @@ public class ImmortalEmission : MonoBehaviour
                 }
             }
         }
-        if (FallBlueEmission)
+        if (FallBlueEmissionOn)
         {
             var player = gameObject;
             if (player != null)
@@ -158,7 +222,7 @@ public class ImmortalEmission : MonoBehaviour
     }
     public void FallEmissionOff()
     {
-        if (FallBloodEmission)
+        if (FallBloodEmissionOn)
         {
             var player = gameObject;
             if (player != null)
@@ -175,7 +239,7 @@ public class ImmortalEmission : MonoBehaviour
                 }
             }
         }
-        if (FallBlueEmission)
+        if (FallBlueEmissionOn)
         {
             var player = gameObject;
             if (player != null)

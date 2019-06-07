@@ -60,7 +60,7 @@ public class MoukariTaiJotain : MonoBehaviour
         float steppi = 99 * Time.deltaTime;
 
         Vector3 newDir = Vector3.RotateTowards(knockBackSeuranta.transform.forward, targetDir, steppi, 0.0f);
-        UnityEngine.Debug.DrawRay(transform.position, newDir * 1.5f, Color.blue);
+        //UnityEngine.Debug.DrawRay(transform.position, newDir * 1.5f, Color.blue);
         newDir.y = 0;
 
         knockBackSeuranta.rotation = Quaternion.LookRotation(newDir);

@@ -116,9 +116,9 @@ namespace Invector
             Ray toTop = new Ray(boxPoint.top, boxPoint.top- torso.position);
             Ray toCenter = new Ray(torso.position, boxPoint.center - torso.position);
             Ray toBottom = new Ray(torso.position, boxPoint.bottom - torso.position);
-            UnityEngine.Debug.DrawRay(toTop.origin, toTop.direction, Color.red, 2);
-            UnityEngine.Debug.DrawRay(toCenter.origin, toCenter.direction, Color.green, 2);
-            UnityEngine.Debug.DrawRay(toBottom.origin, toBottom.direction, Color.blue, 2);
+            //UnityEngine.Debug.DrawRay(toTop.origin, toTop.direction, Color.red, 2);
+            //UnityEngine.Debug.DrawRay(toCenter.origin, toCenter.direction, Color.green, 2);
+            //UnityEngine.Debug.DrawRay(toBottom.origin, toBottom.direction, Color.blue, 2);
             RaycastHit hit;
             var dist = Vector3.Distance(torso.position, boxPoint.top);
             if (Physics.Raycast(toTop,out hit, dist, mask))

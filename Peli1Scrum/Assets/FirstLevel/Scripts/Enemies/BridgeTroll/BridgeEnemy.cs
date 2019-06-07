@@ -64,7 +64,7 @@ public class BridgeEnemy : MonoBehaviour
             float step = speed * Time.deltaTime;
 
             Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
-            UnityEngine.Debug.DrawRay(transform.position, newDir, Color.red);
+            //UnityEngine.Debug.DrawRay(transform.position, newDir, Color.red);
             newDir.y = 0;
 
             // Move our position a step closer to the target.
