@@ -5,19 +5,23 @@ using System.Diagnostics;
 //[DebuggerStepThrough]
 public class AttackArea : MonoBehaviour
 {
-
-    public BoxCollider territory;
+    [SerializeField]
+    BoxCollider territory;
+    [SerializeField]
     GameObject player;
-    bool playerInTerritory;
-
-    public GameObject enemy;
+    [SerializeField]
+    GameObject enemy;
+    [SerializeField]
     BasicEnemy basicEnemy;
+    bool playerInTerritory;
 
     // Use this for initialization
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        enemy = transform.gameObject;
         basicEnemy = enemy.GetComponent<BasicEnemy>();
+        territory = enemy.GetComponent<BoxCollider>();
         playerInTerritory = false;
     }
 
@@ -39,8 +43,14 @@ public class AttackArea : MonoBehaviour
                 basicEnemy.targetTooHigh = true;
                 basicEnemy.MoveToPlayer();
             }
+            if (basicEnemy.target.position.y < basicEnemy.transform.position.y - 1.5f && basicEnemy.target.position.y > basicEnemy.transform.position.y - 3.5f)
+            {
+                basicEnemy.targetTooLow = true;
+                basicEnemy.MoveToPlayer();
+            }
             else
             {
+                basicEnemy.targetTooLow = false;
                 basicEnemy.targetTooHigh = false;
                 basicEnemy.MoveToPlayer();
             }
@@ -49,16 +59,13 @@ public class AttackArea : MonoBehaviour
 
         if (playerInTerritory == false && basicEnemy.GoToRest == false)
         {
-        basicEnemy.targetTooHigh = false;
-        basicEnemy.Rest();
+            basicEnemy.targetTooLow = false;
+            basicEnemy.targetTooHigh = false;
+            basicEnemy.Rest();
         //basicEnemy.GoToRest = true;
         //basicEnemy.restingTime = Time.time;
         }
-        //}
-        //else
-        //{
-        //    basicenemy.Rest();
-        //}
+
     }
 
     void OnTriggerEnter(Collider other)

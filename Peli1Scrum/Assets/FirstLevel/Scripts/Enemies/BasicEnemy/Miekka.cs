@@ -67,28 +67,6 @@ public class Miekka : MonoBehaviour
     {
         
     }
-    //private void OnTriggerEnter(Collider other)
-
-    //{
-    //    //bool isJumping;
-    //    //isJumping = GetComponent<vThirdPersonController>().isJumping;
-    //    if (other.gameObject == player&&player.GetComponent<Health>().immortalMoment==false)
-    //    {
-    //        if (hyppii==false&&!Input.GetKey("space"))
-    //        {
-    //            other.GetComponent<Rigidbody>().AddExplosionForce(6999, transform.position + new Vector3(0, -1f, 0), 3);
-    //        }
-    //        else if(hyppii==true||Input.GetKey("space"))
-    //        {
-    //            other.GetComponent<Rigidbody>().AddExplosionForce(155, transform.position + new Vector3(0, 1f, 0), 3);
-    //        }
-
-    //        //player.GetComponent<Rigidbody>().AddExplosionForce(1, transform.position, 1);
-    //        //rb.AddExplosionForce(999, transform.position, 999);
-    //        player.GetComponent<Health>().TakeDamage();
-
-    //    }
-    //}
     private void FixedUpdate()
     {
         if (collisionHappened && moveTowardsKnockback)

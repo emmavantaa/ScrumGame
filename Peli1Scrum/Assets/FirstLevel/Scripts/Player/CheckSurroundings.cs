@@ -65,7 +65,7 @@ public class CheckSurroundings : MonoBehaviour
             gameObject.GetComponent<Health>().hitByLava = true;
             gameObject.GetComponent<Health>().TakeDamage();
         }
-        if (falling)
+        if (falling && !gameObject.GetComponent<Health>().immortalMoment)
         {
             afterFallHitPoint = collision.contacts[0].point;
             fallDistance = Vector3.Distance(lastGroundHitPoint, afterFallHitPoint);

@@ -46,6 +46,7 @@ public class BasicEnemy : MonoBehaviour
     public bool GoToRest;
     public bool stop;
     public bool targetTooHigh;
+    public bool targetTooLow;
     public bool rightDirection;
     public bool moveTowardsPlayer;
     public bool resti;
@@ -78,6 +79,8 @@ public class BasicEnemy : MonoBehaviour
         backOffTime = 0.3f;
         timeToGoForward = 0.5f;
         player = GameObject.FindGameObjectWithTag("Player");
+        target = player.transform;
+
         startingPoint = transform.position;
         Rest();
     }
@@ -253,7 +256,7 @@ public class BasicEnemy : MonoBehaviour
             //Dash hyöäkkäys pelaajaa kohti, jos pelaajaa ei ole juuri osunut (immortalMoment) + muut ehdot
             //Jos haluaa, että viholliset dashaa pelaaja kohti kun immortalMoment, niin voi commentoida ton -> player.GetComponent<Health>().immortalMoment == false
             if (Vector3.Distance(transform.position, target.position) < dasHRange && dashAttack == false && wait == false && waitForDash == false &&
-                backOffFromPlayer == false && backOff == false && forward == false&& (player.GetComponent<Health>().immortalMoment == false))
+                backOffFromPlayer == false && backOff == false && forward == false&& (player.GetComponent<Health>().immortalMoment == false)&&!targetTooLow)
             {
                 //Muutetaan suunnat normaaleiksi
                 targetDir = target.position - transform.position;
@@ -340,9 +343,9 @@ public class BasicEnemy : MonoBehaviour
             Ray lavaFallCheckRay = new Ray(transform.position + (transform.forward * 0.5f), -transform.up);
             Ray lavaFallCheckRayLeft = new Ray(transform.position + (-transform.right * 0.5f), -transform.up);
             Ray lavaFallCheckRayRight = new Ray(transform.position + (transform.right * 0.5f), -transform.up);
-            Ray collisionCheckRay = new Ray(transform.position + new Vector3(0f, 0.1f, 0f), transform.forward);
-            Ray collisionCheckRayLeft = new Ray(transform.position + new Vector3(0f, 0.1f, 0f) + (-transform.right * 0.5f), -transform.right);
-            Ray collisionCheckRayRight = new Ray(transform.position + new Vector3(0f, 0.1f, 0f) + (transform.right * 0.5f), transform.right);
+            Ray collisionCheckRay = new Ray(transform.position + new Vector3(0f, -0.3f, 0f), transform.forward);
+            Ray collisionCheckRayLeft = new Ray(transform.position + new Vector3(0f, -0.3f, 0f) + (-transform.right * 0.5f), -transform.right);
+            Ray collisionCheckRayRight = new Ray(transform.position + new Vector3(0f, -0.3f, 0f) + (transform.right * 0.5f), transform.right);
             RaycastHit lavaFallCheckRayHit;
 
             //UnityEngine.Debug.DrawRay(lavaFallCheckRay.origin, -transform.up.normalized * 2, Color.black, 10f);
@@ -442,9 +445,9 @@ public class BasicEnemy : MonoBehaviour
             Ray lavaFallCheckRay = new Ray(transform.position + (transform.forward * 0.5f), -transform.up);
             Ray lavaFallCheckRayLeft = new Ray(transform.position + (-transform.right * 0.5f), -transform.up);
             Ray lavaFallCheckRayRight = new Ray(transform.position + (transform.right * 0.5f), -transform.up);
-            Ray collisionCheckRay = new Ray(transform.position + new Vector3(0f, 0.1f, 0f), transform.forward);
-            Ray collisionCheckRayLeft = new Ray(transform.position + new Vector3(0f, 0.1f, 0f) + (-transform.right * 0.5f), -transform.right);
-            Ray collisionCheckRayRight = new Ray(transform.position + new Vector3(0f, 0.1f, 0f) + (transform.right * 0.5f), transform.right);
+            Ray collisionCheckRay = new Ray(transform.position + new Vector3(0f, -0.3f, 0f), transform.forward);
+            Ray collisionCheckRayLeft = new Ray(transform.position + new Vector3(0f, -0.3f, 0f) + (-transform.right * 0.5f), -transform.right);
+            Ray collisionCheckRayRight = new Ray(transform.position + new Vector3(0f, -0.3f, 0f) + (transform.right * 0.5f), transform.right);
             RaycastHit lavaFallCheckRayHit = new RaycastHit();
             UnityEngine.Debug.DrawRay(lavaFallCheckRay.origin, -transform.up.normalized * 2, Color.black, 10f);
             Vector3 targetDir;

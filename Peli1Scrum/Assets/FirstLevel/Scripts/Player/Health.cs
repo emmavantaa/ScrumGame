@@ -72,7 +72,7 @@ public class Health : MonoBehaviour
     }
     public void Die()
     {
-        cc.lockMovement=true;
+        
         dead = true;
         startShowingTextTime = Time.time;
 
@@ -80,6 +80,16 @@ public class Health : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (dead)
+        {
+            cc.lockMovement = true;
+            if (Time.time >= startShowingTextTime + 1)
+            {
+                player.GetComponent<Rigidbody>().isKinematic = true;
+            }
+            
+
+        }
         if (useImmortalMomentAll)
         {
             useImmortalMomentHitByEnemy = false;
