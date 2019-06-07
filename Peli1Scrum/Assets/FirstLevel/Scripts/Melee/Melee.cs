@@ -79,7 +79,7 @@ public class Melee : MonoBehaviour
         }
 
         //Laitetaan melee ase selkään jos painetaan nappia tai laitetaan automaattisesti selkään jos pyssy otetaan esille
-        else if (Input.GetKeyDown("1") && keräilyScript.collectedMelee && esillä|| esillä && shootingScript.isOut)
+        else if (Input.GetKeyDown("1") && keräilyScript.collectedMelee && esillä|| keräilyScript.collectedMelee && esillä && shootingScript.isOut)
         {
             DontUseMeleeWeapon();
         }
