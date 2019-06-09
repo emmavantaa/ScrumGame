@@ -33349,6 +33349,26 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 6054644047352938271, guid: 4b7317b2ec8691842b95f802a0ec6d3b,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6054644047352938271, guid: 4b7317b2ec8691842b95f802a0ec6d3b,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6054644047352938271, guid: 4b7317b2ec8691842b95f802a0ec6d3b,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6054644047352938271, guid: 4b7317b2ec8691842b95f802a0ec6d3b,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b7317b2ec8691842b95f802a0ec6d3b, type: 3}
 --- !u!1 &742745932
@@ -57462,7 +57482,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c08d2b4123ea345be4e1eee17385b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startTimeBtwShots: 1
+  startTimeBtwShots: 0.1
   projectile: {fileID: 8288308217629098615, guid: 5b6cca5afee434b40a3675f37c7ea2e0,
     type: 3}
   shootscript: {fileID: 1540500114}
@@ -57532,7 +57552,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1054415614}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 33.31, y: 31.03, z: -84.22}
+  m_LocalPosition: {x: 33.31, y: 31.03, z: -80.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -86311,7 +86331,7 @@ MonoBehaviour:
   instantiateFrom: {fileID: 936222923}
   weaponOut: {fileID: 2026403632}
   ammoSpeed: 1000
-  ammoObj: {fileID: 8288308217629098615, guid: 5b6cca5afee434b40a3675f37c7ea2e0, type: 3}
+  ammoObj: {fileID: 1573727441}
   isOut: 0
 --- !u!114 &1540500120
 MonoBehaviour:
@@ -87879,6 +87899,12 @@ Transform:
   m_Father: {fileID: 1527405939}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 57.29, z: 0}
+--- !u!1 &1573727441 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6054644047980087527, guid: 4b7317b2ec8691842b95f802a0ec6d3b,
+    type: 3}
+  m_PrefabInstance: {fileID: 737783726}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1578178760
 GameObject:
   m_ObjectHideFlags: 0
