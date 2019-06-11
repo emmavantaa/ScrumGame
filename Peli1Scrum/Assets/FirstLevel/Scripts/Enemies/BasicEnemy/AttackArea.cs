@@ -43,7 +43,7 @@ public class AttackArea : MonoBehaviour
                 basicEnemy.targetTooHigh = true;
                 basicEnemy.MoveToPlayer();
             }
-            if (basicEnemy.target.position.y < basicEnemy.transform.position.y - 1.5f && basicEnemy.target.position.y > basicEnemy.transform.position.y - 3.5f)
+            if (basicEnemy.target.position.y < basicEnemy.transform.position.y - 1.5f && basicEnemy.target.position.y > basicEnemy.transform.position.y - 4.5f)
             {
                 basicEnemy.targetTooLow = true;
                 basicEnemy.MoveToPlayer();
