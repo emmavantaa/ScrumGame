@@ -49,7 +49,7 @@ void Update()
             ammoObj.SetActive(false);
         }
 
-        if (ammoAmount <= 1)
+        if (ammoAmount >= 1)
         {
             ammoObj.SetActive(true);
         }

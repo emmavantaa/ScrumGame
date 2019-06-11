@@ -10,7 +10,7 @@ public class SpawnAmmo : MonoBehaviour
     public float startTimeBtwShots;
 
     public GameObject projectile;
-    //public GameObject Attack;
+  
 
    public  ShootingScript shootscript;
 
@@ -29,20 +29,20 @@ public class SpawnAmmo : MonoBehaviour
 
     void Update()
     {
+        if (shootscript.ammoAmount >= 3 && maxSpawns == 3)
+        {
+
+            //maxSpawns -= 3;
 
 
-        if (maxSpawns != 3)
+        }
+
+       else if (maxSpawns != 3)
         {
             SpawnSmallEnemies();
         }
 
-        if (shootscript.ammoAmount == 0 && maxSpawns ==3)
-        {
-
-            maxSpawns -= 3;
-
-           
-        }
+       
 
 
     }
