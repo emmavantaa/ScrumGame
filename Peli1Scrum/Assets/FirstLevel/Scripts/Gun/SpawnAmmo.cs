@@ -39,7 +39,7 @@ public class SpawnAmmo : MonoBehaviour
 
        else if (maxSpawns != 3)
         {
-            SpawnSmallEnemies();
+            SpawnSmallBunnies();
         }
 
        
@@ -48,7 +48,7 @@ public class SpawnAmmo : MonoBehaviour
     }
 
 
-    void SpawnSmallEnemies()
+    void SpawnSmallBunnies()
     {
 
       

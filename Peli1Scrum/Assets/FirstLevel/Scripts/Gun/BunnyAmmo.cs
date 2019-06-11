@@ -15,6 +15,20 @@ public class BunnyAmmo : MonoBehaviour
             Debug.Log("Hits Carrot wall");
             Destroy(gameObject, 1f);
         }
+
+
+        if (col.gameObject.CompareTag("CarrotWall") || col.gameObject.CompareTag("Ground"))
+        {
+
+            Debug.Log("Hits Carrot wall");
+            Destroy(gameObject, 1f);
+        }
+
+        if (col.gameObject.CompareTag("Enemy"))
+        {
+
+            Destroy(col.gameObject);
+        }
     }
 
 }
