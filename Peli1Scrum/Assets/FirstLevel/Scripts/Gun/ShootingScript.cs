@@ -19,6 +19,7 @@ public class ShootingScript : MonoBehaviour
 
     [HideInInspector]
     public bool isOut;
+    public bool isCollected;
 
 
 private void Start()
@@ -88,7 +89,7 @@ void Update()
 
     void GunActivity()
     {
-        if (Input.GetKeyDown(KeyCode.Tab)&& !isOut) 
+        if (Input.GetKeyDown(KeyCode.Tab)&& !isOut &&isCollected) 
         {
             weaponOut.SetActive(true);
             isOut = true;

@@ -24,10 +24,10 @@ public class BunnyAmmo : MonoBehaviour
             Destroy(gameObject, 1f);
         }
 
-        if (col.gameObject.CompareTag("Enemy"))
+        if (col.gameObject.CompareTag("Enemy")&&col== col.gameObject.GetComponent<CapsuleCollider>())
         {
-
-            Destroy(col.gameObject);
+            col.GetComponent<VihuHealth>().takeDamage();
+            
         }
     }
 

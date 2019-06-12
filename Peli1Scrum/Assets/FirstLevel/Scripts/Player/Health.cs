@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Invector.CharacterController;
 using System.Diagnostics;
+using UnityEngine.UI;
 //[DebuggerStepThrough]
 public class Health : MonoBehaviour
     
@@ -23,6 +24,7 @@ public class Health : MonoBehaviour
     public bool useImmortalMomentHitByEnemy;
     public bool useImmortalMomentHitByLava;
     public bool useImmortalMomentHitByFall;
+    public Text healthAmountText;
 
     [HideInInspector]
     public bool immortalMoment;
@@ -80,8 +82,11 @@ public class Health : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        healthAmountText.text = "Health: " + playerHp;
         if (dead)
         {
+
+            healthAmountText.text = "Health: " + "Död";
             cc.lockMovement = true;
             if (Time.time >= startShowingTextTime + 1)
             {

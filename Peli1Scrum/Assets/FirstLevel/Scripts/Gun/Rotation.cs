@@ -10,6 +10,7 @@ public class Rotation : MonoBehaviour
     public ShootingScript shooting;
     public GameObject bunnyzuukaUI;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +35,7 @@ public class Rotation : MonoBehaviour
 
             Destroy(gameObject, 0.2f);
             shooting.ShootingisOn = true;
+            shooting.isCollected = true;
         }
     }
 }
